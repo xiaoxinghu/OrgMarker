@@ -1,0 +1,414 @@
+// !$*UTF8*$!
+{
+	archiveVersion = 1;
+	classes = {
+	};
+	objectVersion = 46;
+	objects = {
+
+/* Begin PBXBuildFile section */
+		03E134C71E8DB768002F8C34 /* Helpers.swift in Sources */ = {isa = PBXBuildFile; fileRef = 03E134C61E8DB768002F8C34 /* Helpers.swift */; };
+		A74A5FCA1E7A21540099E079 /* Serialization.swift in Sources */ = {isa = PBXBuildFile; fileRef = A74A5FC91E7A21540099E079 /* Serialization.swift */; };
+		A789D5EE1E7B405C00B4DAC1 /* Tree.swift in Sources */ = {isa = PBXBuildFile; fileRef = A789D5ED1E7B405C00B4DAC1 /* Tree.swift */; };
+		A78CB9881E8486AA004D9E93 /* StructuralTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = A78CB9871E8486AA004D9E93 /* StructuralTests.swift */; };
+		A7BF418F1E788AC800E5C867 /* Regex.swift in Sources */ = {isa = PBXBuildFile; fileRef = A7BF418E1E788AC800E5C867 /* Regex.swift */; };
+		A7BF41921E789E2D00E5C867 /* GrammarTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = A7BF41911E789E2D00E5C867 /* GrammarTests.swift */; };
+		A7D307871E8895AD00DB61CF /* Obsolete.swift in Sources */ = {isa = PBXBuildFile; fileRef = A7D307861E8895AD00DB61CF /* Obsolete.swift */; };
+		A7D307891E889A0A00DB61CF /* InlineTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = A7D307881E889A0A00DB61CF /* InlineTests.swift */; };
+		A7DFA7FD1E8359BC0020576B /* Functional.swift in Sources */ = {isa = PBXBuildFile; fileRef = A7DFA7FC1E8359BC0020576B /* Functional.swift */; };
+		A7DFA7FF1E8364000020576B /* Utils.swift in Sources */ = {isa = PBXBuildFile; fileRef = A7DFA7FE1E8364000020576B /* Utils.swift */; };
+		OBJ_28 /* Grammar.swift in Sources */ = {isa = PBXBuildFile; fileRef = OBJ_9 /* Grammar.swift */; };
+		OBJ_29 /* Mark.swift in Sources */ = {isa = PBXBuildFile; fileRef = OBJ_10 /* Mark.swift */; };
+		OBJ_30 /* Marker.swift in Sources */ = {isa = PBXBuildFile; fileRef = OBJ_11 /* Marker.swift */; };
+		OBJ_32 /* Pattern.swift in Sources */ = {isa = PBXBuildFile; fileRef = OBJ_13 /* Pattern.swift */; };
+		OBJ_33 /* String.swift in Sources */ = {isa = PBXBuildFile; fileRef = OBJ_14 /* String.swift */; };
+		OBJ_40 /* MarkerTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = OBJ_17 /* MarkerTests.swift */; };
+		OBJ_42 /* PerformanceTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = OBJ_19 /* PerformanceTests.swift */; };
+		OBJ_44 /* OrgMarker.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = OBJ_21 /* OrgMarker.framework */; };
+/* End PBXBuildFile section */
+
+/* Begin PBXContainerItemProxy section */
+		A7BF418D1E788A7900E5C867 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = OBJ_1 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = OBJ_23;
+			remoteInfo = OrgMarker;
+		};
+/* End PBXContainerItemProxy section */
+
+/* Begin PBXFileReference section */
+		03E134C61E8DB768002F8C34 /* Helpers.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Helpers.swift; sourceTree = "<group>"; };
+		A74A5FC91E7A21540099E079 /* Serialization.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Serialization.swift; sourceTree = "<group>"; };
+		A789D5ED1E7B405C00B4DAC1 /* Tree.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Tree.swift; sourceTree = "<group>"; };
+		A78CB9871E8486AA004D9E93 /* StructuralTests.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = StructuralTests.swift; sourceTree = "<group>"; };
+		A7BF418E1E788AC800E5C867 /* Regex.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Regex.swift; sourceTree = "<group>"; };
+		A7BF41911E789E2D00E5C867 /* GrammarTests.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = GrammarTests.swift; sourceTree = "<group>"; };
+		A7D307861E8895AD00DB61CF /* Obsolete.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Obsolete.swift; sourceTree = "<group>"; };
+		A7D307881E889A0A00DB61CF /* InlineTests.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = InlineTests.swift; sourceTree = "<group>"; };
+		A7DFA7FC1E8359BC0020576B /* Functional.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Functional.swift; sourceTree = "<group>"; };
+		A7DFA7FE1E8364000020576B /* Utils.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Utils.swift; sourceTree = "<group>"; };
+		OBJ_10 /* Mark.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Mark.swift; sourceTree = "<group>"; };
+		OBJ_11 /* Marker.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Marker.swift; sourceTree = "<group>"; };
+		OBJ_13 /* Pattern.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Pattern.swift; sourceTree = "<group>"; };
+		OBJ_14 /* String.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = String.swift; sourceTree = "<group>"; };
+		OBJ_17 /* MarkerTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MarkerTests.swift; sourceTree = "<group>"; };
+		OBJ_19 /* PerformanceTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PerformanceTests.swift; sourceTree = "<group>"; };
+		OBJ_21 /* OrgMarker.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = OrgMarker.framework; sourceTree = BUILT_PRODUCTS_DIR; };
+		OBJ_22 /* OrgMarkerTests.xctest */ = {isa = PBXFileReference; lastKnownFileType = file; path = OrgMarkerTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
+		OBJ_6 /* Package.swift */ = {isa = PBXFileReference; explicitFileType = sourcecode.swift; path = Package.swift; sourceTree = "<group>"; };
+		OBJ_9 /* Grammar.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Grammar.swift; sourceTree = "<group>"; };
+/* End PBXFileReference section */
+
+/* Begin PBXFrameworksBuildPhase section */
+		OBJ_34 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 0;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		OBJ_43 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 0;
+			files = (
+				OBJ_44 /* OrgMarker.framework in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXFrameworksBuildPhase section */
+
+/* Begin PBXGroup section */
+		A7BF41901E788D5000E5C867 /* Meta */ = {
+			isa = PBXGroup;
+			children = (
+				OBJ_6 /* Package.swift */,
+			);
+			name = Meta;
+			sourceTree = "<group>";
+		};
+		OBJ_15 /* Tests */ = {
+			isa = PBXGroup;
+			children = (
+				OBJ_16 /* OrgMarkerTests */,
+			);
+			path = Tests;
+			sourceTree = "<group>";
+		};
+		OBJ_16 /* OrgMarkerTests */ = {
+			isa = PBXGroup;
+			children = (
+				A7BF41911E789E2D00E5C867 /* GrammarTests.swift */,
+				A78CB9871E8486AA004D9E93 /* StructuralTests.swift */,
+				OBJ_17 /* MarkerTests.swift */,
+				OBJ_19 /* PerformanceTests.swift */,
+				A7D307881E889A0A00DB61CF /* InlineTests.swift */,
+				03E134C61E8DB768002F8C34 /* Helpers.swift */,
+			);
+			name = OrgMarkerTests;
+			path = Tests/OrgMarkerTests;
+			sourceTree = SOURCE_ROOT;
+		};
+		OBJ_20 /* Products */ = {
+			isa = PBXGroup;
+			children = (
+				OBJ_21 /* OrgMarker.framework */,
+				OBJ_22 /* OrgMarkerTests.xctest */,
+			);
+			name = Products;
+			sourceTree = BUILT_PRODUCTS_DIR;
+		};
+		OBJ_5 = {
+			isa = PBXGroup;
+			children = (
+				OBJ_7 /* Sources */,
+				OBJ_15 /* Tests */,
+				A7BF41901E788D5000E5C867 /* Meta */,
+				OBJ_20 /* Products */,
+			);
+			sourceTree = "<group>";
+		};
+		OBJ_7 /* Sources */ = {
+			isa = PBXGroup;
+			children = (
+				OBJ_8 /* OrgMarker */,
+			);
+			path = Sources;
+			sourceTree = "<group>";
+		};
+		OBJ_8 /* OrgMarker */ = {
+			isa = PBXGroup;
+			children = (
+				OBJ_9 /* Grammar.swift */,
+				OBJ_10 /* Mark.swift */,
+				A7DFA7FE1E8364000020576B /* Utils.swift */,
+				OBJ_11 /* Marker.swift */,
+				OBJ_13 /* Pattern.swift */,
+				OBJ_14 /* String.swift */,
+				A7BF418E1E788AC800E5C867 /* Regex.swift */,
+				A74A5FC91E7A21540099E079 /* Serialization.swift */,
+				A789D5ED1E7B405C00B4DAC1 /* Tree.swift */,
+				A7DFA7FC1E8359BC0020576B /* Functional.swift */,
+				A7D307861E8895AD00DB61CF /* Obsolete.swift */,
+			);
+			name = OrgMarker;
+			path = Sources;
+			sourceTree = SOURCE_ROOT;
+		};
+/* End PBXGroup section */
+
+/* Begin PBXNativeTarget section */
+		OBJ_23 /* OrgMarker */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = OBJ_24 /* Build configuration list for PBXNativeTarget "OrgMarker" */;
+			buildPhases = (
+				OBJ_27 /* Sources */,
+				OBJ_34 /* Frameworks */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = OrgMarker;
+			productName = OrgMarker;
+			productReference = OBJ_21 /* OrgMarker.framework */;
+			productType = "com.apple.product-type.framework";
+		};
+		OBJ_35 /* OrgMarkerTests */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = OBJ_36 /* Build configuration list for PBXNativeTarget "OrgMarkerTests" */;
+			buildPhases = (
+				OBJ_39 /* Sources */,
+				OBJ_43 /* Frameworks */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+				OBJ_45 /* PBXTargetDependency */,
+			);
+			name = OrgMarkerTests;
+			productName = OrgMarkerTests;
+			productReference = OBJ_22 /* OrgMarkerTests.xctest */;
+			productType = "com.apple.product-type.bundle.unit-test";
+		};
+/* End PBXNativeTarget section */
+
+/* Begin PBXProject section */
+		OBJ_1 /* Project object */ = {
+			isa = PBXProject;
+			attributes = {
+				LastUpgradeCheck = 9999;
+			};
+			buildConfigurationList = OBJ_2 /* Build configuration list for PBXProject "OrgMarker" */;
+			compatibilityVersion = "Xcode 3.2";
+			developmentRegion = English;
+			hasScannedForEncodings = 0;
+			knownRegions = (
+				en,
+			);
+			mainGroup = OBJ_5;
+			productRefGroup = OBJ_20 /* Products */;
+			projectDirPath = "";
+			projectRoot = "";
+			targets = (
+				OBJ_23 /* OrgMarker */,
+				OBJ_35 /* OrgMarkerTests */,
+			);
+		};
+/* End PBXProject section */
+
+/* Begin PBXSourcesBuildPhase section */
+		OBJ_27 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 0;
+			files = (
+				OBJ_28 /* Grammar.swift in Sources */,
+				OBJ_29 /* Mark.swift in Sources */,
+				A74A5FCA1E7A21540099E079 /* Serialization.swift in Sources */,
+				OBJ_30 /* Marker.swift in Sources */,
+				A7BF418F1E788AC800E5C867 /* Regex.swift in Sources */,
+				A7DFA7FF1E8364000020576B /* Utils.swift in Sources */,
+				03E134C71E8DB768002F8C34 /* Helpers.swift in Sources */,
+				A789D5EE1E7B405C00B4DAC1 /* Tree.swift in Sources */,
+				A7D307871E8895AD00DB61CF /* Obsolete.swift in Sources */,
+				A7DFA7FD1E8359BC0020576B /* Functional.swift in Sources */,
+				OBJ_32 /* Pattern.swift in Sources */,
+				OBJ_33 /* String.swift in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		OBJ_39 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 0;
+			files = (
+				A78CB9881E8486AA004D9E93 /* StructuralTests.swift in Sources */,
+				OBJ_40 /* MarkerTests.swift in Sources */,
+				OBJ_42 /* PerformanceTests.swift in Sources */,
+				A7D307891E889A0A00DB61CF /* InlineTests.swift in Sources */,
+				A7BF41921E789E2D00E5C867 /* GrammarTests.swift in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXSourcesBuildPhase section */
+
+/* Begin PBXTargetDependency section */
+		OBJ_45 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = OBJ_23 /* OrgMarker */;
+			targetProxy = A7BF418D1E788A7900E5C867 /* PBXContainerItemProxy */;
+		};
+/* End PBXTargetDependency section */
+
+/* Begin XCBuildConfiguration section */
+		OBJ_25 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ENABLE_TESTABILITY = YES;
+				FRAMEWORK_SEARCH_PATHS = (
+					"$(inherited)",
+					"$(PLATFORM_DIR)/Developer/Library/Frameworks",
+				);
+				HEADER_SEARCH_PATHS = "$(inherited)";
+				INFOPLIST_FILE = OrgMarker.xcodeproj/OrgMarker_Info.plist;
+				LD_RUNPATH_SEARCH_PATHS = "$(TOOLCHAIN_DIR)/usr/lib/swift/macosx";
+				OTHER_LDFLAGS = "$(inherited)";
+				OTHER_SWIFT_FLAGS = "$(inherited)";
+				PRODUCT_BUNDLE_IDENTIFIER = OrgMarker;
+				PRODUCT_MODULE_NAME = "$(TARGET_NAME:c99extidentifier)";
+				PRODUCT_NAME = "$(TARGET_NAME:c99extidentifier)";
+				SWIFT_OPTIMIZATION_LEVEL = "-Owholemodule";
+				TARGET_NAME = OrgMarker;
+			};
+			name = Debug;
+		};
+		OBJ_26 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ENABLE_TESTABILITY = YES;
+				FRAMEWORK_SEARCH_PATHS = (
+					"$(inherited)",
+					"$(PLATFORM_DIR)/Developer/Library/Frameworks",
+				);
+				HEADER_SEARCH_PATHS = "$(inherited)";
+				INFOPLIST_FILE = OrgMarker.xcodeproj/OrgMarker_Info.plist;
+				LD_RUNPATH_SEARCH_PATHS = "$(TOOLCHAIN_DIR)/usr/lib/swift/macosx";
+				OTHER_LDFLAGS = "$(inherited)";
+				OTHER_SWIFT_FLAGS = "$(inherited)";
+				PRODUCT_BUNDLE_IDENTIFIER = OrgMarker;
+				PRODUCT_MODULE_NAME = "$(TARGET_NAME:c99extidentifier)";
+				PRODUCT_NAME = "$(TARGET_NAME:c99extidentifier)";
+				SWIFT_OPTIMIZATION_LEVEL = "-Owholemodule";
+				TARGET_NAME = OrgMarker;
+			};
+			name = Release;
+		};
+		OBJ_3 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				COMBINE_HIDPI_IMAGES = YES;
+				COPY_PHASE_STRIP = NO;
+				DEBUG_INFORMATION_FORMAT = dwarf;
+				DYLIB_INSTALL_NAME_BASE = "@rpath";
+				ENABLE_NS_ASSERTIONS = YES;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				MACOSX_DEPLOYMENT_TARGET = 10.10;
+				ONLY_ACTIVE_ARCH = YES;
+				OTHER_SWIFT_FLAGS = "-DXcode";
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SDKROOT = macosx;
+				SUPPORTED_PLATFORMS = "macosx iphoneos iphonesimulator appletvos appletvsimulator watchos watchsimulator";
+				SWIFT_ACTIVE_COMPILATION_CONDITIONS = SWIFT_PACKAGE;
+				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
+				SWIFT_VERSION = 3.0;
+				USE_HEADERMAP = NO;
+			};
+			name = Debug;
+		};
+		OBJ_37 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				EMBEDDED_CONTENT_CONTAINS_SWIFT = YES;
+				FRAMEWORK_SEARCH_PATHS = (
+					"$(inherited)",
+					"$(PLATFORM_DIR)/Developer/Library/Frameworks",
+				);
+				HEADER_SEARCH_PATHS = "$(inherited)";
+				INFOPLIST_FILE = OrgMarker.xcodeproj/OrgMarkerTests_Info.plist;
+				LD_RUNPATH_SEARCH_PATHS = "@loader_path/../Frameworks";
+				OTHER_LDFLAGS = "$(inherited)";
+				OTHER_SWIFT_FLAGS = "$(inherited)";
+				TARGET_NAME = OrgMarkerTests;
+			};
+			name = Debug;
+		};
+		OBJ_38 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				EMBEDDED_CONTENT_CONTAINS_SWIFT = YES;
+				FRAMEWORK_SEARCH_PATHS = (
+					"$(inherited)",
+					"$(PLATFORM_DIR)/Developer/Library/Frameworks",
+				);
+				HEADER_SEARCH_PATHS = "$(inherited)";
+				INFOPLIST_FILE = OrgMarker.xcodeproj/OrgMarkerTests_Info.plist;
+				LD_RUNPATH_SEARCH_PATHS = "@loader_path/../Frameworks";
+				OTHER_LDFLAGS = "$(inherited)";
+				OTHER_SWIFT_FLAGS = "$(inherited)";
+				TARGET_NAME = OrgMarkerTests;
+			};
+			name = Release;
+		};
+		OBJ_4 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				COMBINE_HIDPI_IMAGES = YES;
+				COPY_PHASE_STRIP = YES;
+				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
+				DYLIB_INSTALL_NAME_BASE = "@rpath";
+				GCC_OPTIMIZATION_LEVEL = s;
+				MACOSX_DEPLOYMENT_TARGET = 10.10;
+				OTHER_SWIFT_FLAGS = "-DXcode";
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SDKROOT = macosx;
+				SUPPORTED_PLATFORMS = "macosx iphoneos iphonesimulator appletvos appletvsimulator watchos watchsimulator";
+				SWIFT_ACTIVE_COMPILATION_CONDITIONS = SWIFT_PACKAGE;
+				SWIFT_OPTIMIZATION_LEVEL = "-O";
+				SWIFT_VERSION = 3.0;
+				USE_HEADERMAP = NO;
+			};
+			name = Release;
+		};
+/* End XCBuildConfiguration section */
+
+/* Begin XCConfigurationList section */
+		OBJ_2 /* Build configuration list for PBXProject "OrgMarker" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				OBJ_3 /* Debug */,
+				OBJ_4 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Debug;
+		};
+		OBJ_24 /* Build configuration list for PBXNativeTarget "OrgMarker" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				OBJ_25 /* Debug */,
+				OBJ_26 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Debug;
+		};
+		OBJ_36 /* Build configuration list for PBXNativeTarget "OrgMarkerTests" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				OBJ_37 /* Debug */,
+				OBJ_38 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Debug;
+		};
+/* End XCConfigurationList section */
+	};
+	rootObject = OBJ_1 /* Project object */;
+}

@@ -10,10 +10,11 @@ import Foundation
 
 extension Mark {
   public func serialize(on text: String) -> [String : Any] {
+    let nsRange = text.nsRange(from: range)
     var dict: [String : Any] = [
       "name": name,
-      "location": range.location,
-      "length": range.length,
+      "location": nsRange.location,
+      "length": nsRange.length,
     ]
     
     if !meta.isEmpty {

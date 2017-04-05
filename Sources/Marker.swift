@@ -7,6 +7,7 @@
 //
 
 import Foundation
+import Dispatch
 
 public enum Errors: Error {
   case unexpectedToken(String)
@@ -73,7 +74,7 @@ public struct Marker {
   }
   
   public func mark(_ text: String, chunkSize: Int = 30, callback: @escaping (Result<[Mark]>) -> Void) {
-    let ranges: [NSRange]!
+    let ranges: [Range<String.Index>]!
     let grammar: Grammar!
     let prepare = breakdown |> curry(genGrammar)(text)
     switch prepare(text) {
@@ -120,31 +121,20 @@ public struct Marker {
 extension Marker {
   // MARK: private functions
   
-  fileprivate func breakdown(_ text: String) -> Result<[NSRange]> {
-    let pattern = "(\(eol))(\\*+)\(space)"
-    let regex: RegularExpression!
-    do {
-      regex = try RegularExpression(pattern: pattern, options: [])
-    } catch {
-      return .failure(error)
+  func breakdown(_ text: String) -> Result<[Range<String.Index>]> {
+    var ranges = [Range<String.Index>]()
+    var range = text.startIndex..<text.endIndex
+    while !range.isEmpty,
+      let match = text.range(of: "(\(eol))(\\*+)\(space)", options: .regularExpression, range: range) {
+        let point = text.index(after: match.lowerBound)
+        ranges.append(range.lowerBound..<point)
+        range = point..<text.endIndex
     }
-    let matches = regex.matches(in: text, options: [], range: NSMakeRange(0, text.characters.count))
-    var loc = 0
-    var ranges = [NSRange]()
-    for m in matches {
-      let stars = m.rangeAt(1)
-      let newLoc = stars.location + 1
-      let range = NSMakeRange(loc, newLoc - loc)
-      ranges.append(range)
-      loc = newLoc
-    }
-    if loc < text.characters.count {
-      ranges.append(NSMakeRange(loc, text.characters.count - loc))
-    }
+    if !range.isEmpty { ranges.append(range) }
     return .success(ranges)
   }
   
-  func genGrammar(_ text: String, ranges: [NSRange]) -> Result<(String, [NSRange], Grammar)> {
+  func genGrammar(_ text: String, ranges: [Range<String.Index>]) -> Result<(String, [Range<String.Index>], Grammar)> {
     var todo = todos.flatMap { $0 }
     let pattern = "\(eol)#\\+TODO:\(space)*(.*)\(eol)"
     var regex: RegularExpression!
@@ -153,21 +143,21 @@ extension Marker {
     } catch {
       return .failure(error)
     }
-    if let m = regex.firstMatch(in: text, options: [], range: ranges[0]) {
-      todo = (text as NSString).substring(with: m.rangeAt(1))
+    if let m = regex.firstMatch(in: text, range: ranges[0]) {
+      todo = text.substring(with: m.captures[1]!)
         .components(separatedBy: .whitespaces).filter { $0 != "|" && !$0.isEmpty }
     }
     
     return .success(text, ranges, Grammar.main(todo: todo))
   }
   
-  func mark(_ text: String, range: NSRange, with grammar: Grammar) -> Result<[Mark]> {
+  func mark(_ text: String, range: Range<String.Index>, with grammar: Grammar) -> Result<[Mark]> {
     let _mark =
       curry(tokenize)(text)(grammar) |> curry(matchParagraph)(text) |> matchList |> matchTable
     return _mark(range)
   }
   
-  func mark(_ text: String, ranges: [NSRange], with grammar: Grammar) -> Result<[Mark]> {
+  func mark(_ text: String, ranges: [Range<String.Index>], with grammar: Grammar) -> Result<[Mark]> {
     return ranges.reduce(.success([Mark]())) { result, range in
       guard case .success(let acc) = result else { return result }
       switch mark(text, range: range, with: grammar) {
@@ -179,8 +169,8 @@ extension Marker {
     }
   }
   
-  func tokenize(_ text: String, with grammar: Grammar = Grammar.main(), range: NSRange? = nil) -> Result<[Mark]> {
-    let range = range ?? NSMakeRange(0, text.characters.count)
+  func tokenize(_ text: String, with grammar: Grammar = Grammar.main(), range: Range<String.Index>? = nil) -> Result<[Mark]> {
+    let range = range ?? text.startIndex..<text.endIndex
     do {
       let marks = try grammar.parse(text, range: range)
       return .success(marks)
@@ -189,7 +179,7 @@ extension Marker {
     }
   }
   
-  func inlineMarkup(on text: String, range: NSRange) -> [Mark] {
+  func inlineMarkup(on text: String, range: Range<String.Index>) -> [Mark] {
     return Grammar.inline.markup(on: text, range: range)
   }
   
@@ -208,7 +198,7 @@ extension Marker {
   
   func sort(_ marks: [Mark]) -> Result<[Mark]> {
     let sorted = marks.sorted { (m1, m2) -> Bool in
-      return m1.range.location < m2.range.location
+      return m1.range.lowerBound < m2.range.lowerBound
     }
     return .success(sorted)
   }

@@ -9,45 +9,45 @@
 import Foundation
 
 // TODO this code is not complete
-fileprivate func _matchMaking(_ marks: [Mark],
-                  name: String,
-                  matchBegin: (Mark) -> Bool,
-                  matchEnd: (Mark) -> Bool,
-                  markContent: (NSRange) -> [Mark],
-                  beginFallback: (Mark) -> Mark) -> [Mark] {
-  var marks = marks
-  var begins = [(Int, Mark)]()
-  var index = 0
-  
-  while index < marks.count {
-    let mark = marks[index]
-    if matchBegin(mark) {
-      begins.append((index, mark))
-      index += 1
-      continue
-    }
-    
-    if let (beginIndex, beginMark) = begins.first,
-      matchEnd(mark),
-      beginIndex < index {
-      let contentRange = NSUnionRange(marks[beginIndex + 1].range, marks[index - 1].range)
-      var contentMarks = [beginMark]
-      contentMarks.append(contentsOf: markContent(contentRange))
-      contentMarks.append(mark)
-      marks.removeSubrange(beginIndex..<index+1)
-      var container = Mark(name, marks: contentMarks)!
-      container.marks = contentMarks
-      marks.insert(container, at: beginIndex)
-      begins.removeAll()
-      index = beginIndex + 1
-      continue
-    }
-    
-    index += 1
-  }
-  
-  return marks
-}
+//fileprivate func _matchMaking(_ marks: [Mark],
+//                  name: String,
+//                  matchBegin: (Mark) -> Bool,
+//                  matchEnd: (Mark) -> Bool,
+//                  markContent: (NSRange) -> [Mark],
+//                  beginFallback: (Mark) -> Mark) -> [Mark] {
+//  var marks = marks
+//  var begins = [(Int, Mark)]()
+//  var index = 0
+//  
+//  while index < marks.count {
+//    let mark = marks[index]
+//    if matchBegin(mark) {
+//      begins.append((index, mark))
+//      index += 1
+//      continue
+//    }
+//    
+//    if let (beginIndex, beginMark) = begins.first,
+//      matchEnd(mark),
+//      beginIndex < index {
+//      let contentRange = NSUnionRange(marks[beginIndex + 1].range, marks[index - 1].range)
+//      var contentMarks = [beginMark]
+//      contentMarks.append(contentsOf: markContent(contentRange))
+//      contentMarks.append(mark)
+//      marks.removeSubrange(beginIndex..<index+1)
+//      var container = Mark(name, marks: contentMarks)!
+//      container.marks = contentMarks
+//      marks.insert(container, at: beginIndex)
+//      begins.removeAll()
+//      index = beginIndex + 1
+//      continue
+//    }
+//    
+//    index += 1
+//  }
+//  
+//  return marks
+//}
 
 // TODO What's wrong with this code, in spite of performance.
 // It seems that tho code is not thread safe
@@ -111,46 +111,46 @@ fileprivate func _matchMaking(_ marks: [Mark],
 //  return grouped + _group(Array(marks[cursor..<marks.count]), name: name, renameTo: renameTo, match: match)
 //}
 
-fileprivate extension Marker {
-  func matchBlocks(_ marks: [Mark]) -> Result<[Mark]> {
-    var blockType = ""
-    
-    return .success(
-      _matchMaking(
-        marks, name: "block",
-        matchBegin: { mark in
-          if mark.name == "block.begin" {
-            blockType = mark.meta[".type"]!.lowercased()
-            return true
-          }
-          return false
-      }, matchEnd: { mark in
-        return mark.name == "block.end"
-          && mark.meta[".type"]!.lowercased() == blockType
-      }, markContent: { range in
-        return [Mark("block.content", range: range)]
-      }, beginFallback: { mark in
-        return mark
-      })
-    )
-  }
-  
-  func matchDrawers(_ marks: [Mark]) -> Result<[Mark]> {
-    return .success(
-      _matchMaking(
-        marks, name: "drawer",
-        matchBegin: { mark in
-          return mark.name == "drawer.begin"
-      }, matchEnd: { mark in
-        return mark.name == "drawer.end"
-      }, markContent: { range in
-        return [Mark("drawer.content", range: range)]
-      }, beginFallback: { mark in
-        var mark = mark
-        mark.name = "line"
-        return mark
-      })
-    )
-  }
-
-}
+//fileprivate extension Marker {
+//  func matchBlocks(_ marks: [Mark]) -> Result<[Mark]> {
+//    var blockType = ""
+//    
+//    return .success(
+//      _matchMaking(
+//        marks, name: "block",
+//        matchBegin: { mark in
+//          if mark.name == "block.begin" {
+//            blockType = mark.meta[".type"]!.lowercased()
+//            return true
+//          }
+//          return false
+//      }, matchEnd: { mark in
+//        return mark.name == "block.end"
+//          && mark.meta[".type"]!.lowercased() == blockType
+//      }, markContent: { range in
+//        return [Mark("block.content", range: range)]
+//      }, beginFallback: { mark in
+//        return mark
+//      })
+//    )
+//  }
+//  
+//  func matchDrawers(_ marks: [Mark]) -> Result<[Mark]> {
+//    return .success(
+//      _matchMaking(
+//        marks, name: "drawer",
+//        matchBegin: { mark in
+//          return mark.name == "drawer.begin"
+//      }, matchEnd: { mark in
+//        return mark.name == "drawer.end"
+//      }, markContent: { range in
+//        return [Mark("drawer.content", range: range)]
+//      }, beginFallback: { mark in
+//        var mark = mark
+//        mark.name = "line"
+//        return mark
+//      })
+//    )
+//  }
+//
+//}

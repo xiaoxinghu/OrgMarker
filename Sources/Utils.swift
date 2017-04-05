@@ -10,10 +10,9 @@ import Foundation
 
 extension Grammar {
   func firstMatch(in text: String,
-                  options: NSRegularExpression.MatchingOptions = [],
-                  range: NSRange) throws -> (Pattern, NSTextCheckingResult) {
+                  range: Range<String.Index>) throws -> (Pattern, RegexMatchingResult) {
     for pattern in patterns {
-      if let m = pattern.match.expression.firstMatch(in: text, options: options, range: range) {
+      if let m = pattern.match.expression.firstMatch(in: text, range: range) {
         return (pattern, m)
       }
     }
@@ -21,36 +20,36 @@ extension Grammar {
   }
   
   func matches(in text: String,
-               options: NSRegularExpression.MatchingOptions = [],
-               range: NSRange) -> [(Pattern, NSTextCheckingResult)] {
+               range: Range<String.Index>) -> [(Pattern, RegexMatchingResult)] {
     
-    var matches = [(Pattern, NSTextCheckingResult)]()
+    var matches = [(Pattern, RegexMatchingResult)]()
     for pattern in patterns {
-      matches += pattern.match.expression.matches(in: text, options: options, range: range).map { (pattern, $0) }
+      matches += pattern.match.expression.matches(in: text, range: range).map { (pattern, $0) }
     }
     return matches
   }
   
   func markup(on text: String,
-              options: NSRegularExpression.MatchingOptions = [],
-              range: NSRange) -> [Mark] {
-    return matches(in: text, options: options, range: range).map { (pattern, match) in
+              range: Range<String.Index>) -> [Mark] {
+    return matches(in: text, range: range).map { (pattern, match) in
       return Mark(pattern.name, range: match.range)
     }
   }
   
   func parse(_ text: String,
-             options: NSRegularExpression.MatchingOptions = [],
-             range: NSRange? = nil) throws -> [Mark] {
+             range: Range<String.Index>? = nil) throws -> [Mark] {
     var marks = [Mark]()
     
-    func _parse(_ range: NSRange) throws -> NSRange {
-      let (pattern, match) = try firstMatch(in: text, options: options, range: range)
+    func _parse(_ range: Range<String.Index>) throws -> Range<String.Index> {
+      let (pattern, match) = try firstMatch(in: text, range: range)
       var newMark = Mark(pattern.name, range: match.range)
       if let captures = pattern.match.captures {
         for capture in captures {
-          if match.rangeAt(capture.index).length == 0 { continue }
-          var cMark = Mark(capture.name, range: match.rangeAt(capture.index))
+//          if match.rangeAt(capture.index).length == 0 { continue }
+          guard let c = match.captures[capture.index], !c.isEmpty else {
+            continue
+          }
+          var cMark = Mark(capture.name, range: match.captures[capture.index]!)
           if let cGrammar = capture.grammar {
             cMark.marks = cGrammar.markup(on: text, range: cMark.range)
           }
@@ -59,20 +58,19 @@ extension Grammar {
         }
       }
       marks.append(newMark)
-      return NSMakeRange(range.location + match.range.length, range.length - match.range.length)
+      return match.range.upperBound..<range.upperBound
     }
-    var range = range ?? NSMakeRange(0, text.characters.count)
-    while range.length > 0 {
+    var range = range ?? text.startIndex..<text.endIndex
+    while !range.isEmpty {
       range = try _parse(range)
     }
     return marks
   }
   
   func parse(_ text: String,
-             options: NSRegularExpression.MatchingOptions = [],
-             ranges: [NSRange]) throws -> [Mark] {
+             ranges: [Range<String.Index>]) throws -> [Mark] {
     return try ranges.reduce([Mark]()) { result, range in
-      return try result + parse(text, options: options, range: range)
+      return try result + parse(text, range: range)
     }
   }
 }
@@ -110,7 +108,7 @@ func _group(_ marks: [Mark],
 
 func _combine(_ marks: [Mark],
               name: String,
-              processContent: (NSRange) -> [Mark],
+              processContent: (Range<String.Index>) -> [Mark],
               match: (Mark) -> Bool) -> [Mark] {
   guard let firstIndex = marks.index(where: match) else {
     return marks

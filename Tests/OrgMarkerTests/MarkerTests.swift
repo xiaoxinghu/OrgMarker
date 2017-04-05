@@ -68,7 +68,7 @@ class MarkerTests: XCTestCase {
   func testMarking() throws {
 
     let marker = Marker()
-    guard case .success(_, _, let grammar) = marker.genGrammar(text, ranges: [NSMakeRange(0, text.characters.count)]) else {
+    guard case .success(_, _, let grammar) = marker.genGrammar(text, ranges: [text.startIndex..<text.endIndex]) else {
       XCTFail()
       return
     }
@@ -361,6 +361,32 @@ class MarkerTests: XCTestCase {
     print(">>>>>>>>>>>>>>>>>>>>>")
     print("\(json)")
     print(">>>>>>>>>>>>>>>>>>>>>")
+    
+  }
+  
+  func testPOC() {
+//    let marker = Marker()
+//    let result = marker._breakdown(text)
+//    guard case .success(let ranges) = result else {
+//      XCTFail("marking failed")
+//      return
+//    }
+//    
+//    for range in ranges {
+//      print(">>>>>>>>>>>>>>>>>>>>>")
+//      print("\(text.substring(with: range))")
+//    }
+//    
+//    let old = marker.breakdown(text)
+//    guard case .success(let oldRanges) = old else {
+//      XCTFail("marking failed")
+//      return
+//    }
+//    
+//    
+//    for i in 0..<ranges.count {
+//      XCTAssertEqual(text.substring(with: ranges[i]), (text as NSString).substring(with: oldRanges[i]))
+//    }
   }
 
   static var allTests : [(String, (MarkerTests) -> () throws -> Void)] {

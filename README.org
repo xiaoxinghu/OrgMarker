@@ -10,7 +10,7 @@
   time, it can also be used as a traditional parser like swift-org. Also it is
   aiming for better performance.
 
-* Basic sage
+* Basic Usage
 
   #+BEGIN_SRC swift
     import OrgMarker

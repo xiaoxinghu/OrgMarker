@@ -16,6 +16,9 @@ extension Mark {
       "length": range.length,
     ]
     
+    if !meta.isEmpty {
+      dict["meta"] = meta
+    }
     if !marks.isEmpty {
       dict["marks"] = marks.map { $0.serialize(on: text) }
     }

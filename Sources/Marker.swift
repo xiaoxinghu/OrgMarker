@@ -145,7 +145,7 @@ extension Marker {
   }
   
   func genGrammar(_ text: String, ranges: [NSRange]) -> Result<(String, [NSRange], Grammar)> {
-    var todo = ["TODO", "DONE"]
+    var todo = todos.flatMap { $0 }
     let pattern = "\(eol)#\\+TODO:\(space)*(.*)\(eol)"
     var regex: RegularExpression!
     do {

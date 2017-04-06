@@ -18,3 +18,10 @@
     let marker = OrgMarker()
     let marks = marker.mark(text)
   #+END_SRC
+
+* Release
+
+  #+BEGIN_SRC sh :results silent
+    agvtool new-marketing-version 0.1.1
+    # sed -i.bak "s/s\.version = .*/s\.version = '0\.7\.9'/" SwiftOrg.podspec
+  #+END_SRC

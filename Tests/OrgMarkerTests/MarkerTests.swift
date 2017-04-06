@@ -15,38 +15,38 @@ class MarkerTests: XCTestCase {
   var lines: [String]!
   override func setUp() {
     lines = [
-      /* 00 */ "#+TITLE: Org Mode Syntax",
-      /* 01 */ "#+TODO: TODO NEXT | DONE",
-      /* 02 */ "",
-      /* 03 */ "* NEXT Section One         :tag1:tag2:",
-      /* 04 */ "  DEADLINE: <2017-02-28 Tue>",
-      /* 05 */ "  :PROPERTIES:",
-      /* 06 */ "  :CATEGORY: nice",
-      /* 07 */ "  :END:",
-      /* 08 */ "",
-      /* 09 */ "  Fist line of a *paragraph*.",
-      /* 10 */ "  [[org-mode][www.org-mode.org]] is awesome.",
-      /* 11 */ "-----",
-      /* 12 */ "| Name         | Species    | Gender | Role         |",
-      /* 13 */ "|--------------+------------+--------+--------------|",
-      /* 14 */ "| Bruce Wayne  | Human      | M      | Batman       |",
-      /* 15 */ "| Clark Kent   | Kryptonian | M      | Superman     |",
-      /* 16 */ "| Diana Prince | Amazonian  | F      | Wonder Woman |",
-      /* 17 */ "-----",
-      /* 18 */ "- list item one",
-      /* 19 */ "2. [ ] list item two",
-      /* 20 */ "  1) [X] list item two.one",
-      /* 21 */ "-----",
-      /* 22 */ "#+BEGIN_SRC swift",
-      /* 23 */ "let stuff = \"org-mode\"",
-      /* 24 */ "print(\"\\(stuff) is awesome.\")",
-      /* 25 */ "#+end_src",
-      /* 26 */ "-----",
-      /* 27 */ "# This is a comment.",
-      /* 28 */ "* [#A] Section Two",
-      /* 29 */ "** Section Two.One",
-      /* 30 */ "-----",
-      /* 31 */ "[fn:1] footnote one.",
+      "#+TITLE: Org Mode Syntax",                              /* 00 */
+      "#+TODO: TODO NEXT | DONE",                              /* 01 */
+      "",                                                      /* 02 */
+      "* NEXT Section One         :tag1:tag2:",                /* 03 */
+      "  DEADLINE: <2017-02-28 Tue>",                          /* 04 */
+      "  :PROPERTIES:",                                        /* 05 */
+      "  :CATEGORY: nice",                                     /* 06 */
+      "  :END:",                                               /* 07 */
+      "",                                                      /* 08 */
+      "  Fist line of a *paragraph*.",                         /* 09 */
+      "  [[org-mode][www.org-mode.org]] is awesome.",          /* 10 */
+      "-----",                                                 /* 11 */
+      "| Name         | Species    | Gender | Role         |", /* 12 */
+      "|--------------+------------+--------+--------------|", /* 13 */
+      "| Bruce Wayne  | Human      | M      | Batman       |", /* 14 */
+      "| Clark Kent   | Kryptonian | M      | Superman     |", /* 15 */
+      "| Diana Prince | Amazonian  | F      | Wonder Woman |", /* 16 */
+      "-----",                                                 /* 17 */
+      "- list item one",                                       /* 18 */
+      "2. [ ] list item two",                                  /* 19 */
+      "  1) [X] list item two.one",                            /* 20 */
+      "-----",                                                 /* 21 */
+      "#+BEGIN_SRC swift",                                     /* 22 */
+      "let stuff = \"org-mode\"",                              /* 23 */
+      "print(\"\\(stuff) is awesome.\")",                      /* 24 */
+      "#+end_src",                                             /* 25 */
+      "-----",                                                 /* 26 */
+      "# This is a comment.",                                  /* 27 */
+      "* [#A] Section Two",                                    /* 28 */
+      "** Section Two.One",                                    /* 29 */
+      "-----",                                                 /* 30 */
+      "[fn:1] footnote one.",                                  /* 31 */
     ]
 
     text = lines.joined(separator: "\n")
@@ -54,8 +54,8 @@ class MarkerTests: XCTestCase {
   }
 
   func eval(_ marks: [Mark], at cursor: Int,
-         file: StaticString = #file, line: UInt = #line,
-         that: (Mark) -> Void) -> Int {
+            file: StaticString = #file, line: UInt = #line,
+            that: (Mark) -> Void) -> Int {
     if marks.count <= cursor {
       XCTFail("mark is nil", file: file, line: line)
       return cursor + 1
@@ -67,12 +67,14 @@ class MarkerTests: XCTestCase {
 
   func testMarking() throws {
 
+    
     let marker = Marker()
-    guard case .success(_, _, let grammar) = marker.genGrammar(text, ranges: [NSMakeRange(0, text.characters.count)]) else {
-      XCTFail()
-      return
-    }
-    let result = marker.tokenize(text, with: grammar)
+    let f = marker.genGrammar |> marker.tokenize
+//    guard case .success(_, _, let grammar) = marker.genGrammar(Context(text)) else {
+//      XCTFail()
+//      return
+//    }
+    let result = f(Context(text))
     guard case .success(let marks) = result else {
       XCTFail()
       return
@@ -341,13 +343,6 @@ class MarkerTests: XCTestCase {
     }
     waitForExpectations(timeout: 10, handler: nil)
 
-
-//    let dict = marks.map { $0.serialize(on: text) }
-//    let data = try JSONSerialization.data(withJSONObject: dict, options: [.prettyPrinted])
-//    let json = String(data: data, encoding: .utf8)!
-//    print(">>>>>>>>>>>>>>>>>>>>>")
-//    print("\(json)")
-
     for section in marks.filter({ $0.name == "section" }) {
       print(">>>>>>>>>>>>>>>>>>>>>")
       print("\(section.value(on: text))")
@@ -355,14 +350,22 @@ class MarkerTests: XCTestCase {
     }
   }
 
-  func testPOC() throws {
+  func testSerialization() throws {
+    
+    let dict = mark(text).map { $0.serialize(on: text) }
+    let data = try JSONSerialization.data(withJSONObject: dict, options: [.prettyPrinted])
+    let json = String(data: data, encoding: .utf8)!
+    print(">>>>>>>>>>>>>>>>>>>>>")
+    print("\(json)")
+    print(">>>>>>>>>>>>>>>>>>>>>")
+    
   }
-
+  
   static var allTests : [(String, (MarkerTests) -> () throws -> Void)] {
     return [
       ("testMarking", testMarking),
-//      ("testStructualGrouping", testStructualGrouping),
-//      ("testSection", testSection),
+      //      ("testStructualGrouping", testStructualGrouping),
+      //      ("testSection", testSection),
     ]
   }
 

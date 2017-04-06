@@ -10,11 +10,18 @@
   time, it can also be used as a traditional parser like swift-org. Also it is
   aiming for better performance.
 
-* Basic sage
+* Basic Usage
 
   #+BEGIN_SRC swift
     import OrgMarker
     let text = "* hello world\n"
     let marker = OrgMarker()
     let marks = marker.mark(text)
+  #+END_SRC
+
+* Release
+
+  #+BEGIN_SRC sh :results silent
+    agvtool new-marketing-version 0.1.1
+    # sed -i.bak "s/s\.version = .*/s\.version = '0\.7\.9'/" SwiftOrg.podspec
   #+END_SRC

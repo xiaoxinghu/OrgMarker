@@ -10,13 +10,13 @@ import Foundation
 
 public struct Mark {
   // MARK: properties
-  var range: NSRange
+  var range: Range<String.Index>
   var name: String
   var meta = [String : String]()
   var marks = [Mark]()
 
   // MARK: init
-  init(_ _name: String, range _range: NSRange) {
+  init(_ _name: String, range _range: Range<String.Index>) {
     name = _name
     range = _range
   }
@@ -25,7 +25,7 @@ public struct Mark {
     if marks.isEmpty { return nil }
     name = _name
     // TODO maybe need more logic, cannot rely on the order
-    range = NSUnionRange(marks.first!.range, marks.last!.range)
+    range = marks.first!.range.lowerBound..<marks.last!.range.upperBound
   }
 
   // MARK: func
@@ -34,7 +34,7 @@ public struct Mark {
   }
 
   func value(on text: String) -> String {
-    return (text as NSString).substring(with: range)
+    return text.substring(with: range)
   }
 
   subscript(_name: String) -> Mark? {
@@ -58,13 +58,6 @@ public struct Mark {
 extension Mark: CustomStringConvertible {
   public var description: String {
     return "Mark(name: \(name))"
-  }
-}
-
-extension NSRange: Equatable {
-  public static func == (lhs: NSRange, rhs: NSRange) -> Bool {
-    return lhs.location == rhs.location &&
-      lhs.length == rhs.length
   }
 }
 

@@ -67,3 +67,17 @@ func expect(_ mark: Mark,
     return
   }
 }
+
+func mark(_ string: String, file: StaticString = #file, line: UInt = #line) -> [Mark] {
+  let marker = Marker()
+  switch marker.mark(string) {
+  case .success(let marks):
+    return marks
+  case .failure(let error):
+    fatalError("> mark failed: \(error)", file: file, line: line)
+  }
+}
+
+func mark(_ lines: [String], file: StaticString = #file, line: UInt = #line) -> [Mark] {
+  return mark(lines.joined(separator: "\n"))
+}

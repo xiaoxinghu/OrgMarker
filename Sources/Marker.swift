@@ -13,8 +13,22 @@ public enum Errors: Error {
   case unexpectedToken(String)
   case cannotFindToken(String)
   case illegalNodeForContainer(String)
+  case other(String)
 }
 
+struct Context {
+  let text: String
+  var parts: [Range<String.Index>]?
+  var grammar: Grammar = Grammar.main()
+  
+  init(_ _text: String,
+       parts _parts: [Range<String.Index>]? = nil,
+       with _grammar: Grammar = Grammar.main()) {
+    text = _text
+    parts = _parts
+    grammar = _grammar
+  }
+}
 
 //func section(_ marks: [Mark], on text: String) -> [Mark] {
 //
@@ -69,18 +83,18 @@ public struct Marker {
   }
   
   public func mark(_ text: String) -> Result<[Mark]> {
-    let f = breakdown |> curry(genGrammar)(text) |> mark
-    return f(text)
+    let f = breakdown |> genGrammar |> mark
+    return f(Context(text))
   }
   
   public func mark(_ text: String, chunkSize: Int = 30, callback: @escaping (Result<[Mark]>) -> Void) {
     let ranges: [Range<String.Index>]!
     let grammar: Grammar!
-    let prepare = breakdown |> curry(genGrammar)(text)
-    switch prepare(text) {
-    case .success(_, let _ranges, let _grammar):
-      ranges = _ranges
-      grammar = _grammar
+    let prepare = breakdown |> genGrammar
+    switch prepare(Context(text)) {
+    case .success(let context):
+      ranges = context.parts
+      grammar = context.grammar
     case .failure(let error):
       callback(.failure(error))
       return
@@ -106,9 +120,10 @@ public struct Marker {
     let chunks = stride(from: 0, to: ranges.count, by: chunkSize).map {
       Array(ranges[$0..<min($0 + chunkSize, ranges.count)])
     }
-    for chunk in chunks {
+    
+    for c in chunks.map({ Context(text, parts: $0, with: grammar) }) {
       queue.async(group: group) {
-        completion(result: self.mark(text, ranges: chunk, with: grammar))
+        completion(result: self.mark(c))
       }
     }
 
@@ -121,20 +136,29 @@ public struct Marker {
 extension Marker {
   // MARK: private functions
   
-  func breakdown(_ text: String) -> Result<[Range<String.Index>]> {
+  func breakdown(_ context: Context) -> Result<Context> {
+    var context = context
     var ranges = [Range<String.Index>]()
-    var range = text.startIndex..<text.endIndex
+    var range = context.text.startIndex..<context.text.endIndex
     while !range.isEmpty,
-      let match = text.range(of: "(\(eol))(\\*+)\(space)", options: .regularExpression, range: range) {
-        let point = text.index(after: match.lowerBound)
+      let match = context.text.range(of: "(\(eol))(\\*+)\(space)", options: .regularExpression, range: range) {
+        let point = context.text.index(after: match.lowerBound)
         ranges.append(range.lowerBound..<point)
-        range = point..<text.endIndex
+        range = point..<context.text.endIndex
     }
     if !range.isEmpty { ranges.append(range) }
-    return .success(ranges)
+    context.parts = ranges
+    return .success(context)
   }
   
-  func genGrammar(_ text: String, ranges: [Range<String.Index>]) -> Result<(String, [Range<String.Index>], Grammar)> {
+  func genGrammar(_ context: Context) -> Result<Context> {
+    var range: Range<String.Index>!
+    if let ranges = context.parts, ranges.count >= 1 {
+      range = ranges[0]
+    } else {
+      range = context.text.startIndex..<context.text.endIndex
+    }
+    
     var todo = todos.flatMap { $0 }
     let pattern = "\(eol)#\\+TODO:\(space)*(.*)\(eol)"
     var regex: RegularExpression!
@@ -143,24 +167,26 @@ extension Marker {
     } catch {
       return .failure(error)
     }
-    if let m = regex.firstMatch(in: text, range: ranges[0]) {
-      todo = text.substring(with: m.captures[1]!)
+    if let m = regex.firstMatch(in: context.text, range: range) {
+      todo = context.text.substring(with: m.captures[1]!)
         .components(separatedBy: .whitespaces).filter { $0 != "|" && !$0.isEmpty }
     }
-    
-    return .success(text, ranges, Grammar.main(todo: todo))
+    var context = context
+    context.grammar = Grammar.main(todo: todo)
+    return .success(context)
   }
   
-  func mark(_ text: String, range: Range<String.Index>, with grammar: Grammar) -> Result<[Mark]> {
+  func mark(_ context: Context, range: Range<String.Index>) -> Result<[Mark]> {
     let _mark =
-      curry(tokenize)(text)(grammar) |> curry(matchParagraph)(text) |> matchList |> matchTable
+      curry(tokenize)(context) |> curry(matchParagraph)(context.text) |> matchList |> matchTable
     return _mark(range)
   }
   
-  func mark(_ text: String, ranges: [Range<String.Index>], with grammar: Grammar) -> Result<[Mark]> {
+  func mark(_ context: Context) -> Result<[Mark]> {
+    let ranges = context.parts ?? [context.text.startIndex..<context.text.endIndex]
     return ranges.reduce(.success([Mark]())) { result, range in
       guard case .success(let acc) = result else { return result }
-      switch mark(text, range: range, with: grammar) {
+      switch mark(context, range: range) {
       case .success(let marks):
         return .success(acc + marks)
       case .failure(let error):
@@ -169,10 +195,13 @@ extension Marker {
     }
   }
   
-  func tokenize(_ text: String, with grammar: Grammar = Grammar.main(), range: Range<String.Index>? = nil) -> Result<[Mark]> {
-    let range = range ?? text.startIndex..<text.endIndex
+  func tokenize(_ context: Context) -> Result<[Mark]> {
+    return tokenize(context, range: context.text.startIndex..<context.text.endIndex)
+  }
+  
+  func tokenize(_ context: Context, range: Range<String.Index>) -> Result<[Mark]> {
     do {
-      let marks = try grammar.parse(text, range: range)
+      let marks = try context.grammar.parse(context.text, range: range)
       return .success(marks)
     } catch {
       return .failure(error)

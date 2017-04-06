@@ -61,13 +61,6 @@ extension Mark: CustomStringConvertible {
   }
 }
 
-extension NSRange: Equatable {
-  public static func == (lhs: NSRange, rhs: NSRange) -> Bool {
-    return lhs.location == rhs.location &&
-      lhs.length == rhs.length
-  }
-}
-
 extension Mark: Equatable {
   public static func == (lhs: Mark, rhs: Mark) -> Bool {
     return lhs.name == rhs.name && lhs.range == rhs.range

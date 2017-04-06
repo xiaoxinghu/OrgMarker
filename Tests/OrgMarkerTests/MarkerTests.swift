@@ -67,12 +67,14 @@ class MarkerTests: XCTestCase {
 
   func testMarking() throws {
 
+    
     let marker = Marker()
-    guard case .success(_, _, let grammar) = marker.genGrammar(text, ranges: [text.startIndex..<text.endIndex]) else {
-      XCTFail()
-      return
-    }
-    let result = marker.tokenize(text, with: grammar)
+    let f = marker.genGrammar |> marker.tokenize
+//    guard case .success(_, _, let grammar) = marker.genGrammar(Context(text)) else {
+//      XCTFail()
+//      return
+//    }
+    let result = f(Context(text))
     guard case .success(let marks) = result else {
       XCTFail()
       return
@@ -349,13 +351,8 @@ class MarkerTests: XCTestCase {
   }
 
   func testSerialization() throws {
-    let marker = Marker()
-    let result = marker.mark(text)
-    guard case .success(let marks) = result else {
-      XCTFail("marking failed")
-      return
-    }
-    let dict = marks.map { $0.serialize(on: text) }
+    
+    let dict = mark(text).map { $0.serialize(on: text) }
     let data = try JSONSerialization.data(withJSONObject: dict, options: [.prettyPrinted])
     let json = String(data: data, encoding: .utf8)!
     print(">>>>>>>>>>>>>>>>>>>>>")
@@ -364,31 +361,6 @@ class MarkerTests: XCTestCase {
     
   }
   
-  func testPOC() {
-//    let marker = Marker()
-//    let result = marker._breakdown(text)
-//    guard case .success(let ranges) = result else {
-//      XCTFail("marking failed")
-//      return
-//    }
-//    
-//    for range in ranges {
-//      print(">>>>>>>>>>>>>>>>>>>>>")
-//      print("\(text.substring(with: range))")
-//    }
-//    
-//    let old = marker.breakdown(text)
-//    guard case .success(let oldRanges) = old else {
-//      XCTFail("marking failed")
-//      return
-//    }
-//    
-//    
-//    for i in 0..<ranges.count {
-//      XCTAssertEqual(text.substring(with: ranges[i]), (text as NSString).substring(with: oldRanges[i]))
-//    }
-  }
-
   static var allTests : [(String, (MarkerTests) -> () throws -> Void)] {
     return [
       ("testMarking", testMarking),

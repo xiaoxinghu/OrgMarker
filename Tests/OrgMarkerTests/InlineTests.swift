@@ -9,19 +9,6 @@
 import XCTest
 @testable import OrgMarker
 
-fileprivate func m1(line: String) throws -> Mark {
-  let marker = Marker()
-  
-  let result = marker.mark(line)
-  switch result {
-  case .success(let marks):
-    XCTAssertEqual(1, marks.count)
-    return marks[0]
-  case .failure(let error):
-    throw error
-  }
-}
-
 class InlineTests: XCTestCase {
   var text: String!
   var lines: [String]!
@@ -42,7 +29,7 @@ class InlineTests: XCTestCase {
     ]
     for (text, name) in syntax {
       let line = "org-mode is \(text). smiley face 😀."
-      expect(try m1(line: line),
+      expect(mark(line)[0],
              to: haveMark(name, to: haveValue(text, on: line)))
     }
   }

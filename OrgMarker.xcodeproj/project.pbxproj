@@ -9,11 +9,9 @@
 /* Begin PBXBuildFile section */
 		03E134C71E8DB768002F8C34 /* Helpers.swift in Sources */ = {isa = PBXBuildFile; fileRef = 03E134C61E8DB768002F8C34 /* Helpers.swift */; };
 		A74A5FCA1E7A21540099E079 /* Serialization.swift in Sources */ = {isa = PBXBuildFile; fileRef = A74A5FC91E7A21540099E079 /* Serialization.swift */; };
-		A789D5EE1E7B405C00B4DAC1 /* Tree.swift in Sources */ = {isa = PBXBuildFile; fileRef = A789D5ED1E7B405C00B4DAC1 /* Tree.swift */; };
 		A78CB9881E8486AA004D9E93 /* StructuralTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = A78CB9871E8486AA004D9E93 /* StructuralTests.swift */; };
 		A7BF418F1E788AC800E5C867 /* Regex.swift in Sources */ = {isa = PBXBuildFile; fileRef = A7BF418E1E788AC800E5C867 /* Regex.swift */; };
 		A7BF41921E789E2D00E5C867 /* GrammarTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = A7BF41911E789E2D00E5C867 /* GrammarTests.swift */; };
-		A7D307871E8895AD00DB61CF /* Obsolete.swift in Sources */ = {isa = PBXBuildFile; fileRef = A7D307861E8895AD00DB61CF /* Obsolete.swift */; };
 		A7D307891E889A0A00DB61CF /* InlineTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = A7D307881E889A0A00DB61CF /* InlineTests.swift */; };
 		A7DFA7FD1E8359BC0020576B /* Functional.swift in Sources */ = {isa = PBXBuildFile; fileRef = A7DFA7FC1E8359BC0020576B /* Functional.swift */; };
 		A7DFA7FF1E8364000020576B /* Utils.swift in Sources */ = {isa = PBXBuildFile; fileRef = A7DFA7FE1E8364000020576B /* Utils.swift */; };
@@ -40,11 +38,9 @@
 /* Begin PBXFileReference section */
 		03E134C61E8DB768002F8C34 /* Helpers.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Helpers.swift; sourceTree = "<group>"; };
 		A74A5FC91E7A21540099E079 /* Serialization.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Serialization.swift; sourceTree = "<group>"; };
-		A789D5ED1E7B405C00B4DAC1 /* Tree.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Tree.swift; sourceTree = "<group>"; };
 		A78CB9871E8486AA004D9E93 /* StructuralTests.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = StructuralTests.swift; sourceTree = "<group>"; };
 		A7BF418E1E788AC800E5C867 /* Regex.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Regex.swift; sourceTree = "<group>"; };
 		A7BF41911E789E2D00E5C867 /* GrammarTests.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = GrammarTests.swift; sourceTree = "<group>"; };
-		A7D307861E8895AD00DB61CF /* Obsolete.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Obsolete.swift; sourceTree = "<group>"; };
 		A7D307881E889A0A00DB61CF /* InlineTests.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = InlineTests.swift; sourceTree = "<group>"; };
 		A7DFA7FC1E8359BC0020576B /* Functional.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Functional.swift; sourceTree = "<group>"; };
 		A7DFA7FE1E8364000020576B /* Utils.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Utils.swift; sourceTree = "<group>"; };
@@ -147,9 +143,7 @@
 				OBJ_14 /* String.swift */,
 				A7BF418E1E788AC800E5C867 /* Regex.swift */,
 				A74A5FC91E7A21540099E079 /* Serialization.swift */,
-				A789D5ED1E7B405C00B4DAC1 /* Tree.swift */,
 				A7DFA7FC1E8359BC0020576B /* Functional.swift */,
-				A7D307861E8895AD00DB61CF /* Obsolete.swift */,
 			);
 			name = OrgMarker;
 			path = Sources;
@@ -229,8 +223,6 @@
 				A7BF418F1E788AC800E5C867 /* Regex.swift in Sources */,
 				A7DFA7FF1E8364000020576B /* Utils.swift in Sources */,
 				03E134C71E8DB768002F8C34 /* Helpers.swift in Sources */,
-				A789D5EE1E7B405C00B4DAC1 /* Tree.swift in Sources */,
-				A7D307871E8895AD00DB61CF /* Obsolete.swift in Sources */,
 				A7DFA7FD1E8359BC0020576B /* Functional.swift in Sources */,
 				OBJ_32 /* Pattern.swift in Sources */,
 				OBJ_33 /* String.swift in Sources */,

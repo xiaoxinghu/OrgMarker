@@ -7,7 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
-		03E134C71E8DB768002F8C34 /* Helpers.swift in Sources */ = {isa = PBXBuildFile; fileRef = 03E134C61E8DB768002F8C34 /* Helpers.swift */; };
+		03CF04FE1E97A3D300BB1E33 /* Helpers.swift in Sources */ = {isa = PBXBuildFile; fileRef = 03E134C61E8DB768002F8C34 /* Helpers.swift */; };
 		A74A5FCA1E7A21540099E079 /* Serialization.swift in Sources */ = {isa = PBXBuildFile; fileRef = A74A5FC91E7A21540099E079 /* Serialization.swift */; };
 		A78CB9881E8486AA004D9E93 /* StructuralTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = A78CB9871E8486AA004D9E93 /* StructuralTests.swift */; };
 		A7BF418F1E788AC800E5C867 /* Regex.swift in Sources */ = {isa = PBXBuildFile; fileRef = A7BF418E1E788AC800E5C867 /* Regex.swift */; };
@@ -51,7 +51,7 @@
 		OBJ_17 /* MarkerTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MarkerTests.swift; sourceTree = "<group>"; };
 		OBJ_19 /* PerformanceTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PerformanceTests.swift; sourceTree = "<group>"; };
 		OBJ_21 /* OrgMarker.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = OrgMarker.framework; sourceTree = BUILT_PRODUCTS_DIR; };
-		OBJ_22 /* OrgMarkerTests.xctest */ = {isa = PBXFileReference; lastKnownFileType = file; path = OrgMarkerTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
+		OBJ_22 /* OrgMarkerTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; path = OrgMarkerTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		OBJ_6 /* Package.swift */ = {isa = PBXFileReference; explicitFileType = sourcecode.swift; path = Package.swift; sourceTree = "<group>"; };
 		OBJ_9 /* Grammar.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Grammar.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
@@ -222,7 +222,6 @@
 				OBJ_30 /* Marker.swift in Sources */,
 				A7BF418F1E788AC800E5C867 /* Regex.swift in Sources */,
 				A7DFA7FF1E8364000020576B /* Utils.swift in Sources */,
-				03E134C71E8DB768002F8C34 /* Helpers.swift in Sources */,
 				A7DFA7FD1E8359BC0020576B /* Functional.swift in Sources */,
 				OBJ_32 /* Pattern.swift in Sources */,
 				OBJ_33 /* String.swift in Sources */,
@@ -234,6 +233,7 @@
 			buildActionMask = 0;
 			files = (
 				A78CB9881E8486AA004D9E93 /* StructuralTests.swift in Sources */,
+				03CF04FE1E97A3D300BB1E33 /* Helpers.swift in Sources */,
 				OBJ_40 /* MarkerTests.swift in Sources */,
 				OBJ_42 /* PerformanceTests.swift in Sources */,
 				A7D307891E889A0A00DB61CF /* InlineTests.swift in Sources */,
@@ -326,7 +326,8 @@
 				);
 				HEADER_SEARCH_PATHS = "$(inherited)";
 				INFOPLIST_FILE = OrgMarker.xcodeproj/OrgMarkerTests_Info.plist;
-				LD_RUNPATH_SEARCH_PATHS = "@loader_path/../Frameworks";
+				LD_RUNPATH_SEARCH_PATHS = "@loader_path/Frameworks";
+				"LD_RUNPATH_SEARCH_PATHS[sdk=macosx*]" = "@loader_path/../Frameworks";
 				OTHER_LDFLAGS = "$(inherited)";
 				OTHER_SWIFT_FLAGS = "$(inherited)";
 				TARGET_NAME = OrgMarkerTests;
@@ -343,7 +344,8 @@
 				);
 				HEADER_SEARCH_PATHS = "$(inherited)";
 				INFOPLIST_FILE = OrgMarker.xcodeproj/OrgMarkerTests_Info.plist;
-				LD_RUNPATH_SEARCH_PATHS = "@loader_path/../Frameworks";
+				LD_RUNPATH_SEARCH_PATHS = "@loader_path/Frameworks";
+				"LD_RUNPATH_SEARCH_PATHS[sdk=macosx*]" = "@loader_path/../Frameworks";
 				OTHER_LDFLAGS = "$(inherited)";
 				OTHER_SWIFT_FLAGS = "$(inherited)";
 				TARGET_NAME = OrgMarkerTests;

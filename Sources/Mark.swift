@@ -10,10 +10,10 @@ import Foundation
 
 public struct Mark {
   // MARK: properties
-  var range: Range<String.Index>
-  var name: String
-  var meta = [String : String]()
-  var marks = [Mark]()
+  public var range: Range<String.Index>
+  public var name: String
+  public var meta = [String : String]()
+  public var marks = [Mark]()
 
   // MARK: init
   init(_ _name: String, range _range: Range<String.Index>) {

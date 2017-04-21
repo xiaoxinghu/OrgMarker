@@ -22,6 +22,6 @@
 * Release
 
   #+BEGIN_SRC sh :results silent
-    agvtool new-marketing-version 0.1.3
+    agvtool new-marketing-version 0.1.4
     # sed -i.bak "s/s\.version = .*/s\.version = '0\.7\.9'/" SwiftOrg.podspec
   #+END_SRC

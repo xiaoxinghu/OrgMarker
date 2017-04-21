@@ -31,10 +31,27 @@ extension Grammar {
   
   func markup(on text: String,
               range: Range<String.Index>) -> [Mark] {
-    return matches(in: text, range: range).map { (pattern, match) in
-      return Mark(pattern.name, range: match.range)
-    }
+    return matches(in: text, range: range).map(curry(buildMark)(text))
   }
+  
+  fileprivate func buildMark(on text: String, for result: (Pattern, RegexMatchingResult)) -> Mark {
+    let (pattern, match) = result
+    var mark = Mark(pattern.name, range: match.range)
+    for capture in pattern.match.captures ?? [] {
+      guard let c = match.captures[capture.index], !c.isEmpty else {
+        continue
+      }
+      var cMark = Mark(capture.name, range: match.captures[capture.index]!)
+      if let cGrammar = capture.grammar {
+        cMark.marks = cGrammar.markup(on: text, range: cMark.range)
+      }
+      mark.include(cMark)
+      mark.meta[cMark.name.relativePath(from: mark.name)] = cMark.value(on: text)
+    }
+    return mark
+  }
+  
+  
   
   func parse(_ text: String,
              range: Range<String.Index>? = nil) throws -> [Mark] {
@@ -42,21 +59,7 @@ extension Grammar {
     
     func _parse(_ range: Range<String.Index>) throws -> Range<String.Index> {
       let (pattern, match) = try firstMatch(in: text, range: range)
-      var newMark = Mark(pattern.name, range: match.range)
-      if let captures = pattern.match.captures {
-        for capture in captures {
-//          if match.rangeAt(capture.index).length == 0 { continue }
-          guard let c = match.captures[capture.index], !c.isEmpty else {
-            continue
-          }
-          var cMark = Mark(capture.name, range: match.captures[capture.index]!)
-          if let cGrammar = capture.grammar {
-            cMark.marks = cGrammar.markup(on: text, range: cMark.range)
-          }
-          newMark.include(cMark)
-          newMark.meta[cMark.name.relativePath(from: newMark.name)] = cMark.value(on: text)
-        }
-      }
+      let newMark = buildMark(on: text, for: (pattern, match))
       marks.append(newMark)
       return match.range.upperBound..<range.upperBound
     }

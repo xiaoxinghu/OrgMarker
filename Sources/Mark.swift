@@ -37,7 +37,7 @@ public struct Mark {
     return text.substring(with: range)
   }
 
-  subscript(_name: String) -> Mark? {
+  public subscript(_name: String) -> Mark? {
     get {
       return marks.first { mark in
         let n = mark.name[name.endIndex..<mark.name.endIndex]

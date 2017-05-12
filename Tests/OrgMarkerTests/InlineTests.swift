@@ -23,7 +23,7 @@ class InlineTests: XCTestCase {
       ("=awesome=", "verbatim"),
       ("*awesome*", "bold"),
       ("/awesome/", "italic"),
-      ("_awesome_", "underlined"),
+      ("_awesome_", "underline"),
       ("+awesome+", "strikeThrough"),
       ("[[awesome][www.orgmode.org]]", "link"),
     ]

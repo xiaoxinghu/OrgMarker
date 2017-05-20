@@ -1,27 +1,27 @@
 * OrgMarker
-  A super fast org-mode syntax marker written in swift.
+A super fast org-mode syntax marker written in swift.
 
 * swift-org vs. OrgMarker
-  This is a rewrite from ground up based on my other org-mode parser [[https://github.com/xiaoxinghu/swift-org][swift-org]].
-  swift-org is more of a traditional syntax parser, which understands the syntax
-  in your org files and provide you with useful data extracted from them. e.g.
-  =TODO= items. In the contrary, =OrgMarker= is more *markup* oriented. Compared
-  to swift-org, it is a better approach for syntax highlighting. At the same
-  time, it can also be used as a traditional parser like swift-org. Also it is
-  aiming for better performance.
+This is a rewrite from ground up based on my other org-mode parser [[https://github.com/xiaoxinghu/swift-org][swift-org]].
+swift-org is more of a traditional syntax parser, which understands the syntax
+in your org files and provide you with useful data extracted from them. e.g.
+=TODO= items. In the contrary, =OrgMarker= is more *markup* oriented. Compared
+to swift-org, it is a better approach for syntax highlighting. At the same
+time, it can also be used as a traditional parser like swift-org. Also it is
+aiming for better performance.
 
 * Basic Usage
 
-  #+BEGIN_SRC swift
+#+BEGIN_SRC swift
     import OrgMarker
     let text = "* hello world\n"
     let marker = OrgMarker()
     let marks = marker.mark(text)
-  #+END_SRC
+#+END_SRC
 
 * Release
 
-  #+BEGIN_SRC sh :results silent
+#+BEGIN_SRC sh :results silent
     agvtool new-marketing-version 0.1.6
     # sed -i.bak "s/s\.version = .*/s\.version = '0\.7\.9'/" SwiftOrg.podspec
-  #+END_SRC
+#+END_SRC

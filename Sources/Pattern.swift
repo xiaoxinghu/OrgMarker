@@ -28,7 +28,7 @@ struct Match {
     let expression: RegularExpression
     
     init(_ _pattern: String,
-         options: RegularExpression.Options = [],
+         options: RegularExpression.Options,
          captures _captures: [Capture]? = nil) {
         pattern = _pattern
         captures = _captures
@@ -43,7 +43,7 @@ struct Pattern {
     
     init(_ _name: String,
          match _match: String,
-         options: RegularExpression.Options = [],
+         options: RegularExpression.Options = .anchorsMatchLines,
          captures: [Capture]? = nil) {
         name = _name
         match = Match(_match, options: options, captures: captures)

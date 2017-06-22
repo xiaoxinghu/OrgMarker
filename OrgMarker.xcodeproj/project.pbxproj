@@ -10,6 +10,7 @@
 		03CF04FE1E97A3D300BB1E33 /* Helpers.swift in Sources */ = {isa = PBXBuildFile; fileRef = 03E134C61E8DB768002F8C34 /* Helpers.swift */; };
 		A74A5FCA1E7A21540099E079 /* Serialization.swift in Sources */ = {isa = PBXBuildFile; fileRef = A74A5FC91E7A21540099E079 /* Serialization.swift */; };
 		A7635AC21EFB38A700DAFC95 /* Errors.swift in Sources */ = {isa = PBXBuildFile; fileRef = A7635AC11EFB38A700DAFC95 /* Errors.swift */; };
+		A7635AC41EFB4B4C00DAFC95 /* UtilityTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = A7635AC31EFB4B4C00DAFC95 /* UtilityTests.swift */; };
 		A78CB9881E8486AA004D9E93 /* StructuralTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = A78CB9871E8486AA004D9E93 /* StructuralTests.swift */; };
 		A7BF418F1E788AC800E5C867 /* Regex.swift in Sources */ = {isa = PBXBuildFile; fileRef = A7BF418E1E788AC800E5C867 /* Regex.swift */; };
 		A7BF41921E789E2D00E5C867 /* GrammarTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = A7BF41911E789E2D00E5C867 /* GrammarTests.swift */; };
@@ -40,6 +41,7 @@
 		03E134C61E8DB768002F8C34 /* Helpers.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Helpers.swift; sourceTree = "<group>"; };
 		A74A5FC91E7A21540099E079 /* Serialization.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Serialization.swift; sourceTree = "<group>"; };
 		A7635AC11EFB38A700DAFC95 /* Errors.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Errors.swift; sourceTree = "<group>"; };
+		A7635AC31EFB4B4C00DAFC95 /* UtilityTests.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = UtilityTests.swift; sourceTree = "<group>"; };
 		A78CB9871E8486AA004D9E93 /* StructuralTests.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = StructuralTests.swift; sourceTree = "<group>"; };
 		A7BF418E1E788AC800E5C867 /* Regex.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Regex.swift; sourceTree = "<group>"; };
 		A7BF41911E789E2D00E5C867 /* GrammarTests.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = GrammarTests.swift; sourceTree = "<group>"; };
@@ -102,6 +104,7 @@
 				OBJ_19 /* PerformanceTests.swift */,
 				A7D307881E889A0A00DB61CF /* InlineTests.swift */,
 				03E134C61E8DB768002F8C34 /* Helpers.swift */,
+				A7635AC31EFB4B4C00DAFC95 /* UtilityTests.swift */,
 			);
 			name = OrgMarkerTests;
 			path = Tests/OrgMarkerTests;
@@ -245,6 +248,7 @@
 				A78CB9881E8486AA004D9E93 /* StructuralTests.swift in Sources */,
 				03CF04FE1E97A3D300BB1E33 /* Helpers.swift in Sources */,
 				OBJ_40 /* MarkerTests.swift in Sources */,
+				A7635AC41EFB4B4C00DAFC95 /* UtilityTests.swift in Sources */,
 				OBJ_42 /* PerformanceTests.swift in Sources */,
 				A7D307891E889A0A00DB61CF /* InlineTests.swift in Sources */,
 				A7BF41921E789E2D00E5C867 /* GrammarTests.swift in Sources */,

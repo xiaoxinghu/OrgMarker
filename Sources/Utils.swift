@@ -9,29 +9,46 @@
 import Foundation
 
 extension Grammar {
-    func firstMatch(in text: String,
-                    range: Range<String.Index>) throws -> (Pattern, RegexMatchingResult) {
-        for pattern in patterns {
-            if let m = pattern.match.expression.firstMatch(in: text, range: range) {
+    func firstMatchingPattern(named name: String? = nil,
+                              in text: String,
+                              range: Range<String.Index>) -> (Pattern, RegexMatchingResult)? {
+        var _patterns = patterns
+        var options: RegularExpression.MatchingOptions = .anchored
+        if let patternName = name {
+            _patterns = _patterns.filter { $0.name == patternName }
+            options = []
+        }
+        for pattern in _patterns {
+            if let m = pattern
+                .match
+                .expression
+                .firstMatch(in: text, options: options, range: range) {
                 return (pattern, m)
             }
         }
-        throw Errors.cannotFindToken("Nothing matches")
+        return nil
     }
     
-    func matches(in text: String,
-                 range: Range<String.Index>) -> [(Pattern, RegexMatchingResult)] {
+    func matchingPatterns(named name: String? = nil,
+                          in text: String,
+                          range: Range<String.Index>) -> [(Pattern, RegexMatchingResult)] {
+        
+        var _patterns = patterns
+        if let patternName = name {
+            _patterns = _patterns.filter { $0.name == patternName }
+        }
         
         var matches = [(Pattern, RegexMatchingResult)]()
-        for pattern in patterns {
+        for pattern in _patterns {
             matches += pattern.match.expression.matches(in: text, range: range).map { (pattern, $0) }
         }
         return matches
     }
     
-    func markup(on text: String,
+    func markup(only name: String? = nil,
+                on text: String,
                 range: Range<String.Index>) -> [Mark] {
-        return matches(in: text, range: range).map(curry(buildMark)(text))
+        return matchingPatterns(named: name, in: text, range: range).map(curry(buildMark)(text))
     }
     
     fileprivate func buildMark(on text: String, for result: (Pattern, RegexMatchingResult)) -> Mark {
@@ -58,7 +75,9 @@ extension Grammar {
         var marks = [Mark]()
         
         func _parse(_ range: Range<String.Index>) throws -> Range<String.Index> {
-            let (pattern, match) = try firstMatch(in: text, range: range)
+            guard let (pattern, match) = firstMatchingPattern(in: text, range: range) else {
+                throw Errors.cannotFindToken("Cannot find matching token")
+            }
             let newMark = buildMark(on: text, for: (pattern, match))
             marks.append(newMark)
             return match.range.upperBound..<range.upperBound

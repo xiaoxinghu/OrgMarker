@@ -33,10 +33,13 @@ fileprivate func transform(on string: String, result: TextCheckingResult) -> Reg
 }
 
 extension RegularExpression {
-    func firstMatch(in string: String, range: Range<String.Index>) -> RegexMatchingResult? {
+    func firstMatch(
+        in string: String,
+        options: RegularExpression.MatchingOptions = [],
+        range: Range<String.Index>) -> RegexMatchingResult? {
         guard let result = firstMatch(
             in: string,
-            options: [],
+            options: options,
             range: string.nsRange(from: range)) else {
                 return nil
         }
@@ -44,10 +47,13 @@ extension RegularExpression {
         return transform(on: string, result: result)
     }
     
-    func matches(in string: String, range: Range<String.Index>) -> [RegexMatchingResult] {
+    func matches(
+        in string: String,
+        options: RegularExpression.MatchingOptions = [],
+        range: Range<String.Index>) -> [RegexMatchingResult] {
         let result = matches(
             in: string,
-            options: [],
+            options: options,
             range: string.nsRange(from: range))
         
         return result.map { transform(on: string, result: $0) }

@@ -34,4 +34,11 @@ class InlineTests: XCTestCase {
         }
     }
     
+    func testComplexLink() {
+        let text = "This is an [[awesome website][www.orgmode.org/awesome/tool]]."
+        let m = mark(text)[0]
+        XCTAssertEqual(1, m.marks.count)
+        expect(m, to: haveMark("link"))
+    }
+    
 }

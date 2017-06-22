@@ -8,10 +8,12 @@
 
 import Foundation
 
+typealias PatternMatch = ((Pattern, RegexMatchingResult))
+
 extension Grammar {
     func firstMatchingPattern(named name: String? = nil,
                               in text: String,
-                              range: Range<String.Index>) -> (Pattern, RegexMatchingResult)? {
+                              range: Range<String.Index>) -> PatternMatch? {
         var _patterns = patterns
         var options: RegularExpression.MatchingOptions = .anchored
         if let patternName = name {
@@ -31,16 +33,24 @@ extension Grammar {
     
     func matchingPatterns(named name: String? = nil,
                           in text: String,
-                          range: Range<String.Index>) -> [(Pattern, RegexMatchingResult)] {
+                          range: Range<String.Index>) -> [PatternMatch] {
         
         var _patterns = patterns
         if let patternName = name {
             _patterns = _patterns.filter { $0.name == patternName }
         }
         
-        var matches = [(Pattern, RegexMatchingResult)]()
-        for pattern in _patterns {
-            matches += pattern.match.expression.matches(in: text, range: range).map { (pattern, $0) }
+        var matches = [PatternMatch]()
+        
+        func valid(rmr: RegexMatchingResult) -> Bool {
+            return !matches.contains { _, r in r.range.overlaps(rmr.range) }
+        }
+        
+        for p in _patterns {
+            matches += p.match.expression
+                .matches(in: text, range: range)
+                .filter(valid)
+                .map { (p, $0) }
         }
         return matches
     }
@@ -51,7 +61,7 @@ extension Grammar {
         return matchingPatterns(named: name, in: text, range: range).map(curry(buildMark)(text))
     }
     
-    fileprivate func buildMark(on text: String, for result: (Pattern, RegexMatchingResult)) -> Mark {
+    fileprivate func buildMark(on text: String, for result: PatternMatch) -> Mark {
         let (pattern, match) = result
         var mark = Mark(pattern.name, range: match.range)
         for capture in pattern.match.captures ?? [] {

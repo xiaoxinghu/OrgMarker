@@ -69,7 +69,11 @@ class MarkerTests: XCTestCase {
         
         
         let marker = Marker()
-        let f = marker._genGrammar |> marker.tokenize
+        let adapt: (Context) -> Result<(Context, Range<String.Index>)> = {
+            return .success(($0, $0.text.startIndex..<$0.text.endIndex))
+        }
+        
+        let f = marker._genGrammar |> adapt |> marker.tokenize
         //    guard case .success(_, _, let grammar) = marker.genGrammar(Context(text)) else {
         //      XCTFail()
         //      return
@@ -361,9 +365,27 @@ class MarkerTests: XCTestCase {
         
     }
     
+    func testPartialMarking() {
+        let marker = Marker()
+        let result = marker.mark(text, range: text.range(of: "* NEXT Section One         :tag1:tag2:\n"))
+        guard case .success(let marks) = result else {
+            XCTFail("failed to mark")
+            return
+        }
+        XCTAssertEqual(1, marks.count)
+        let mark = marks[0]
+        expect(mark, to: beNamed("headline"))
+        expect(mark, to: haveMark("headline.stars", to: haveValue("*", on: text)))
+        expect(mark, to: haveMark("headline.keyword", to: haveValue("NEXT", on: text)))
+        expect(mark, to: haveMark("headline.text", to: haveValue("Section One", on: text)))
+        expect(mark, to: haveMark("headline.tags", to: haveValue(":tag1:tag2:", on: text)))
+
+    }
+    
     static var allTests : [(String, (MarkerTests) -> () throws -> Void)] {
         return [
             ("testMarking", testMarking),
+            ("testPartialMarking", testPartialMarking),
             //      ("testStructualGrouping", testStructualGrouping),
             //      ("testSection", testSection),
         ]

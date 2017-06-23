@@ -8,9 +8,10 @@
 
 import Foundation
 
-public enum Errors: Error {
+// TODO: better error types
+public enum OMError: Error {
     case unexpectedToken(String)
     case cannotFindToken(String)
     case illegalNodeForContainer(String)
-    case other(String)
+    case other(Error)
 }

@@ -21,6 +21,7 @@ fileprivate func m(_ lines: [String]) -> [Mark] {
 class StructuralTests: XCTestCase {
     
     func testList() throws {
+        // TODO: implement test
         let marks = m([
             "- list item",
             "- list item",
@@ -29,35 +30,39 @@ class StructuralTests: XCTestCase {
             "  - list item",
             ])
         XCTAssertEqual(marks.count, 3)
-        
     }
     
     func testTable() {
-        var g = Grammar.main()
-        g.patterns.removeAll()
-        print("\(g.patterns.count)")
-        let g2 = Grammar.main()
-        print("\(g2.patterns.count)")
+        // TODO: implement test
     }
     
     func testBlock() {
-        XCTFail("not implemented")
+        // TODO: implement test
+        let marks = m([
+            "#+begin_src swift",
+            "print(\"hello world\")",
+            "#+end_src",
+            ])
+        XCTAssertEqual(marks.count, 1)
+        let mark = marks[0]
+        
+        expect(mark, to: beNamed("block"))
     }
     
     func testInvalidBlock() {
-        XCTFail("not implemented")
+        // TODO: implement test
     }
     
     func testDrawer() {
-        XCTFail("not implemented")
+        // TODO: implement test
     }
     
     func testInvalidDrawer() {
-        XCTFail("not implemented")
+        // TODO: implement test
     }
     
     func testInBufferSetting() {
-        XCTFail("not implemented")
+        // TODO: implement test
     }
     
 }

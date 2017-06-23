@@ -86,7 +86,7 @@ extension Grammar {
         
         func _parse(_ range: Range<String.Index>) throws -> Range<String.Index> {
             guard let (pattern, match) = firstMatchingPattern(in: text, range: range) else {
-                throw Errors.cannotFindToken("Cannot find matching token")
+                throw OMError.cannotFindToken("Cannot find matching token")
             }
             let newMark = buildMark(on: text, for: (pattern, match))
             marks.append(newMark)
@@ -165,4 +165,14 @@ func _combine(_ marks: [Mark],
     group.marks = processContent(group.range)
     marks.replaceSubrange(firstIndex..<cursor, with: [group])
     return _combine(marks, name: name, processContent: processContent, match: match)
+}
+
+func _slice<T>(array: Array<T>, into parts: Int) -> [Array<T>] {
+    let chunkSize = Int(ceil(Double(array.count) / Double(parts)))
+    let sections = (0..<parts)
+    return sections.map { i in
+        let from = i * chunkSize
+        let to = min((i + 1) * chunkSize, array.count)
+        return Array(array[from..<to])
+    }
 }

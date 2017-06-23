@@ -20,6 +20,7 @@ struct Context {
     }
 }
 
+// TODO: Sectionize
 //func section(_ marks: [Mark], on text: String) -> [Mark] {
 //
 //  func level(of headline: Mark) -> Int {
@@ -66,19 +67,20 @@ public struct Marker {
     
     var todos: [[String]]
     let queue = DispatchQueue.global(qos: .userInitiated)
+    public var maxThreads: Int = 4
     
     public init(
         todos _todos: [[String]] = [["TODO"], ["DONE"]]) {
         todos = _todos
     }
     
-    public func mark(_ text: String, range: Range<String.Index>? = nil) -> Result<[Mark]> {
+    public func mark(_ text: String, range: Range<String.Index>? = nil) -> OMResult<[Mark]> {
         let range = range != nil ? range! : text.startIndex..<text.endIndex
         let f = _genGrammar |> curry(_breakdown)(range) |> _mark
         return f(Context(text))
     }
     
-    public func mark(_ text: String, chunkSize: Int = 30, callback: @escaping (Result<[Mark]>) -> Void) {
+    public func mark(_ text: String, callback: @escaping (OMResult<[Mark]>) -> Void) {
         let ranges: [Range<String.Index>]!
         let context: Context!
         let prepare = _genGrammar |> curry(_breakdown)(text.startIndex..<text.endIndex)
@@ -108,11 +110,7 @@ public struct Marker {
         }
         
         let group = DispatchGroup()
-        let chunks = stride(from: 0, to: ranges.count, by: chunkSize).map {
-            Array(ranges[$0..<min($0 + chunkSize, ranges.count)])
-        }
-        
-
+        let chunks = _slice(array: ranges, into: maxThreads)
         
         chunks.forEach { chunk in
             queue.async(group: group) {
@@ -179,27 +177,24 @@ extension Marker {
     }
     
     func _mark(_ context: Context, ranges: [Range<String.Index>]) -> Result<[Mark]> {
-        return ranges.reduce(.success([Mark]())) { result, range in
-            guard case .success(let acc) = result else { return result }
-            switch _mark(context, range: range) {
-            case .success(let marks):
-                return .success(acc + marks)
-            case .failure(let error):
-                return .failure(error)
-            }
+        func _append(marks1: [Mark], marks2: [Mark]) -> [Mark] {
+            return marks1 + marks2
+        }
+        
+        let curriedAppend = curry(_append)
+        
+        return ranges.reduce(Result.success([Mark]())) { result, range in
+            return (curriedAppend <^> result) <*> _mark(context, range: range)
         }
     }
     
-    func tokenize(_ context: Context) -> Result<[Mark]> {
-        return tokenize(context, range: context.text.startIndex..<context.text.endIndex)
-    }
     
     func tokenize(_ context: Context, range: Range<String.Index>) -> Result<[Mark]> {
         do {
             let marks = try context.grammar.parse(context.text, range: range)
             return .success(marks)
         } catch {
-            return .failure(error)
+            return .failure(.other(error))
         }
     }
     

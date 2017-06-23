@@ -31,13 +31,13 @@ class PerformanceTests: XCTestCase {
     func testMarking() {
         let marker = Marker()
         self.measure {
-            _ = marker.tokenize(Context(self.content))
+            _ = marker.tokenize(Context(self.content), range: self.content.startIndex..<self.content.endIndex)
         }
     }
     
     func testParsing() throws {
         let marker = Marker()
-        let result = marker.tokenize(Context(self.content))
+        let result = marker.tokenize(Context(self.content), range: content.startIndex..<content.endIndex)
         guard case .success(let marks) = result else {
             XCTFail()
             return

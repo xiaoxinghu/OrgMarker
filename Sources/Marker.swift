@@ -74,9 +74,12 @@ public struct Marker {
         todos = _todos
     }
     
-    public func mark(_ text: String, range: Range<String.Index>? = nil) -> OMResult<[Mark]> {
-        let range = range != nil ? range! : text.startIndex..<text.endIndex
-        let f = _genGrammar |> curry(_breakdown)(range) |> _mark
+    public func mark(_ text: String) -> OMResult<[Mark]> {
+        return self.mark(text, range: text.startIndex..<text.endIndex)
+    }
+    
+    public func mark(_ text: String, range: Range<String.Index>) -> OMResult<[Mark]> {
+        let f = Parser.updateGrammar |> curry(Parser.breakdown)(range) |> Parser.parse
         return f(Context(text))
     }
     
@@ -190,12 +193,16 @@ extension Marker {
     
     
     func tokenize(_ context: Context, range: Range<String.Index>) -> Result<[Mark]> {
-        do {
-            let marks = try context.grammar.parse(context.text, range: range)
-            return .success(marks)
-        } catch {
-            return .failure(.other(error))
-        }
+        
+        let lexer = Lexer(context.grammar)
+        return lexer.tokenize(context.text, range: range)
+        
+//        do {
+//            let marks = try context.grammar.parse(context.text, range: range)
+//            return .success(marks)
+//        } catch {
+//            return .failure(.other(error))
+//        }
     }
     
     func inlineMarkup(on text: String, range: Range<String.Index>) -> [Mark] {
@@ -213,6 +220,34 @@ extension Marker {
     
     func matchTable(_ marks: [Mark]) -> Result<[Mark]> {
         return .success(_group(marks, name: "table") { $0.name.hasPrefix("table.") })
+    }
+    
+    func addSectionInfo(_ marks: [Mark], at index: Int) -> [Mark] {
+        var marks = marks
+        var headline = marks[index]
+        guard let stars = headline.meta[".stars"] else {
+            return marks
+        }
+        
+        if let next = marks[index+1..<marks.endIndex]
+            .first(where: { $0.name == "headline" && $0.meta[".stars"]!.characters.count <= stars.characters.count }) {
+            headline.meta["end"] = next.meta[".text"]
+        } else {
+            headline.meta["end"] = "EOF"
+        }
+        marks[index] = headline
+        return marks
+    }
+    
+    func updateSectionInfo(_ marks: [Mark]) -> Result<[Mark]> {
+        
+        let headlines = marks.enumerated().filter { $0.element.name == "headline" }.map { $0.offset }
+        
+        let marks = headlines.reduce(marks) { result, headline in
+            return self.addSectionInfo(result, at: headline)
+        }
+        
+        return .success(marks)
     }
     
     func sort(_ marks: [Mark]) -> Result<[Mark]> {

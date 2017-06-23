@@ -87,6 +87,18 @@ class PerformanceTests: XCTestCase {
         }
     }
     
+    func testSectionize() {
+        let marker = Marker()
+        let f: (String) -> OMResult<[Mark]> = marker.mark |> marker.updateSectionInfo
+        
+        var result: OMResult<[Mark]>!
+        measure {
+            result = f(self.content)
+        }
+        
+        print("marks")
+    }
+    
     func testOrder() throws {
         let expectation1 = expectation(description: "expectation1")
         

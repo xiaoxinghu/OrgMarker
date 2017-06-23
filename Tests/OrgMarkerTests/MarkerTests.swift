@@ -367,7 +367,7 @@ class MarkerTests: XCTestCase {
     
     func testPartialMarking() {
         let marker = Marker()
-        let result = marker.mark(text, range: text.range(of: "* NEXT Section One         :tag1:tag2:\n"))
+        let result = marker.mark(text, range: text.range(of: "* NEXT Section One         :tag1:tag2:\n")!)
         guard case .success(let marks) = result else {
             XCTFail("failed to mark")
             return

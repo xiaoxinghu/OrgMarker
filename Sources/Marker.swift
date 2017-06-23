@@ -9,27 +9,18 @@
 import Foundation
 import Dispatch
 
-public enum Errors: Error {
-  case unexpectedToken(String)
-  case cannotFindToken(String)
-  case illegalNodeForContainer(String)
-  case other(String)
-}
-
 struct Context {
-  let text: String
-  var parts: [Range<String.Index>]?
-  var grammar: Grammar = Grammar.main()
-  
-  init(_ _text: String,
-       parts _parts: [Range<String.Index>]? = nil,
-       with _grammar: Grammar = Grammar.main()) {
-    text = _text
-    parts = _parts
-    grammar = _grammar
-  }
+    let text: String
+    var grammar: Grammar = Grammar.main()
+    
+    init(_ _text: String,
+         with _grammar: Grammar = Grammar.main()) {
+        text = _text
+        grammar = _grammar
+    }
 }
 
+// TODO: Sectionize
 //func section(_ marks: [Mark], on text: String) -> [Mark] {
 //
 //  func level(of headline: Mark) -> Int {
@@ -73,162 +64,161 @@ struct Context {
 
 
 public struct Marker {
-
-  var todos: [[String]]
-  let queue = DispatchQueue.global(qos: .userInitiated)
-  
-  public init(
-    todos _todos: [[String]] = [["TODO"], ["DONE"]]) {
-    todos = _todos
-  }
-  
-  public func mark(_ text: String) -> Result<[Mark]> {
-    let f = breakdown |> genGrammar |> mark
-    return f(Context(text))
-  }
-  
-  public func mark(_ text: String, chunkSize: Int = 30, callback: @escaping (Result<[Mark]>) -> Void) {
-    let ranges: [Range<String.Index>]!
-    let grammar: Grammar!
-    let prepare = breakdown |> genGrammar
-    switch prepare(Context(text)) {
-    case .success(let context):
-      ranges = context.parts
-      grammar = context.grammar
-    case .failure(let error):
-      callback(.failure(error))
-      return
+    
+    var todos: [[String]]
+    let queue = DispatchQueue.global(qos: .userInitiated)
+    public var maxThreads: Int = 4
+    
+    public init(
+        todos _todos: [[String]] = [["TODO"], ["DONE"]]) {
+        todos = _todos
     }
     
-    var asyncResult: Result<[Mark]> = .success([Mark]())
-    let resultQ = DispatchQueue(label: "com.orgmarker.result")
-
-    func completion(result: Result<[Mark]>) {
-      resultQ.sync {
-        if case .failure = asyncResult { return }
-        guard case .success(let all) = asyncResult else { return }
-        switch result {
-        case .success(let chunk):
-          asyncResult = .success(all + chunk)
-        case .failure:
-          asyncResult = result
+    public func mark(_ text: String, range: Range<String.Index>? = nil) -> OMResult<[Mark]> {
+        let range = range != nil ? range! : text.startIndex..<text.endIndex
+        let f = _genGrammar |> curry(_breakdown)(range) |> _mark
+        return f(Context(text))
+    }
+    
+    public func mark(_ text: String, callback: @escaping (OMResult<[Mark]>) -> Void) {
+        let ranges: [Range<String.Index>]!
+        let context: Context!
+        let prepare = _genGrammar |> curry(_breakdown)(text.startIndex..<text.endIndex)
+        switch prepare(Context(text)) {
+        case let .success(_context, parts):
+            ranges = parts
+            context = _context
+        case .failure(let error):
+            callback(.failure(error))
+            return
         }
-      }
+        
+        var asyncResult: Result<[Mark]> = .success([Mark]())
+        let resultQ = DispatchQueue(label: "com.orgmarker.result")
+        
+        func completion(result: Result<[Mark]>) {
+            resultQ.sync {
+                if case .failure = asyncResult { return }
+                guard case .success(let all) = asyncResult else { return }
+                switch result {
+                case .success(let chunk):
+                    asyncResult = .success(all + chunk)
+                case .failure:
+                    asyncResult = result
+                }
+            }
+        }
+        
+        let group = DispatchGroup()
+        let chunks = _slice(array: ranges, into: maxThreads)
+        
+        chunks.forEach { chunk in
+            queue.async(group: group) {
+                completion(result: self._mark(context, ranges: chunk))
+            }
+        }
+        
+        group.notify(queue: queue) {
+            callback(asyncResult >>- self.sort)
+        }
     }
-
-    let group = DispatchGroup()
-    let chunks = stride(from: 0, to: ranges.count, by: chunkSize).map {
-      Array(ranges[$0..<min($0 + chunkSize, ranges.count)])
-    }
-    
-    for c in chunks.map({ Context(text, parts: $0, with: grammar) }) {
-      queue.async(group: group) {
-        completion(result: self.mark(c))
-      }
-    }
-
-    group.notify(queue: queue) {
-      callback(asyncResult >>- self.sort)
-    }
-  }
 }
 
 extension Marker {
-  // MARK: private functions
-  
-  func breakdown(_ context: Context) -> Result<Context> {
-    var context = context
-    var ranges = [Range<String.Index>]()
-    var range = context.text.startIndex..<context.text.endIndex
-    while !range.isEmpty,
-      let match = context.text.range(of: "(\(eol))(\\*+)\(space)", options: .regularExpression, range: range) {
-        let point = context.text.index(after: match.lowerBound)
-        ranges.append(range.lowerBound..<point)
-        range = point..<context.text.endIndex
-    }
-    if !range.isEmpty { ranges.append(range) }
-    context.parts = ranges
-    return .success(context)
-  }
-  
-  func genGrammar(_ context: Context) -> Result<Context> {
-    var range: Range<String.Index>!
-    if let ranges = context.parts, ranges.count >= 1 {
-      range = ranges[0]
-    } else {
-      range = context.text.startIndex..<context.text.endIndex
+    // MARK: private functions
+    
+    func _breakdown(_ range: Range<String.Index>, _ context: Context) -> Result<(Context, [Range<String.Index>])> {
+        var ranges = [Range<String.Index>]()
+        var range = range
+        while !range.isEmpty,
+            let match = context.text.range(of: "(\(eol))(\\*+)\(space)", options: .regularExpression, range: range) {
+                let point = context.text.index(after: match.lowerBound)
+                ranges.append(range.lowerBound..<point)
+                range = point..<context.text.endIndex
+        }
+        if !range.isEmpty { ranges.append(range) }
+        return .success(context, ranges)
     }
     
-    var todo = todos.flatMap { $0 }
-    let pattern = "\(eol)#\\+TODO:\(space)*(.*)\(eol)"
-    var regex: RegularExpression!
-    do {
-      regex = try RegularExpression(pattern: pattern, options: [])
-    } catch {
-      return .failure(error)
+    func _genGrammar(_ context: Context) -> Result<Context> {
+        
+        var range = context.text.startIndex..<context.text.endIndex
+        
+        // reduce range to pre first headline
+        if let (_, match) = context
+            .grammar
+            .firstMatchingPattern(
+                named: "headline", in: context.text, range: range) {
+            range = context.text.startIndex..<match.range.lowerBound
+        }
+        
+        // find TODO setting
+        var todo = todos.flatMap { $0 }
+        if let _todo = context.grammar
+            .markup(only: "setting", on: context.text, range: range)
+            .first(where: { $0.meta[".key"] == "TODO" }),
+            let value = _todo.meta[".value"] {
+            todo = value
+                .components(separatedBy: .whitespaces)
+                .filter { $0 != "|" && !$0.isEmpty }
+        }
+        
+        var context = context
+        context.grammar = Grammar.main(todo: todo)
+        return .success(context)
     }
-    if let m = regex.firstMatch(in: context.text, range: range) {
-      todo = context.text.substring(with: m.captures[1]!)
-        .components(separatedBy: .whitespaces).filter { $0 != "|" && !$0.isEmpty }
+    
+    func _mark(_ context: Context, range: Range<String.Index>) -> Result<[Mark]> {
+        let _mark = curry(tokenize)(context)
+            |> curry(matchParagraph)(context.text)
+            |> matchList
+            |> matchTable
+        return _mark(range)
     }
-    var context = context
-    context.grammar = Grammar.main(todo: todo)
-    return .success(context)
-  }
-  
-  func mark(_ context: Context, range: Range<String.Index>) -> Result<[Mark]> {
-    let _mark =
-      curry(tokenize)(context) |> curry(matchParagraph)(context.text) |> matchList |> matchTable
-    return _mark(range)
-  }
-  
-  func mark(_ context: Context) -> Result<[Mark]> {
-    let ranges = context.parts ?? [context.text.startIndex..<context.text.endIndex]
-    return ranges.reduce(.success([Mark]())) { result, range in
-      guard case .success(let acc) = result else { return result }
-      switch mark(context, range: range) {
-      case .success(let marks):
-        return .success(acc + marks)
-      case .failure(let error):
-        return .failure(error)
-      }
+    
+    func _mark(_ context: Context, ranges: [Range<String.Index>]) -> Result<[Mark]> {
+        func _append(marks1: [Mark], marks2: [Mark]) -> [Mark] {
+            return marks1 + marks2
+        }
+        
+        let curriedAppend = curry(_append)
+        
+        return ranges.reduce(Result.success([Mark]())) { result, range in
+            return (curriedAppend <^> result) <*> _mark(context, range: range)
+        }
     }
-  }
-  
-  func tokenize(_ context: Context) -> Result<[Mark]> {
-    return tokenize(context, range: context.text.startIndex..<context.text.endIndex)
-  }
-  
-  func tokenize(_ context: Context, range: Range<String.Index>) -> Result<[Mark]> {
-    do {
-      let marks = try context.grammar.parse(context.text, range: range)
-      return .success(marks)
-    } catch {
-      return .failure(error)
+    
+    
+    func tokenize(_ context: Context, range: Range<String.Index>) -> Result<[Mark]> {
+        do {
+            let marks = try context.grammar.parse(context.text, range: range)
+            return .success(marks)
+        } catch {
+            return .failure(.other(error))
+        }
     }
-  }
-  
-  func inlineMarkup(on text: String, range: Range<String.Index>) -> [Mark] {
-    return Grammar.inline.markup(on: text, range: range)
-  }
-  
-  func matchParagraph(on text: String, _ marks: [Mark]) -> Result<[Mark]> {
-    let combined = _combine(marks, name: "paragraph", processContent: curry(inlineMarkup)(text)) { $0.name == "line" }
-    return .success(combined)
-  }
-  
-  func matchList(_ marks: [Mark]) -> Result<[Mark]> {
-    return .success(_group(marks, name: "list") { $0.name == "list.item" })
-  }
-  
-  func matchTable(_ marks: [Mark]) -> Result<[Mark]> {
-    return .success(_group(marks, name: "table") { $0.name.hasPrefix("table.") })
-  }
-  
-  func sort(_ marks: [Mark]) -> Result<[Mark]> {
-    let sorted = marks.sorted { (m1, m2) -> Bool in
-      return m1.range.lowerBound < m2.range.lowerBound
+    
+    func inlineMarkup(on text: String, range: Range<String.Index>) -> [Mark] {
+        return Grammar.inline.markup(on: text, range: range)
     }
-    return .success(sorted)
-  }
+    
+    func matchParagraph(on text: String, _ marks: [Mark]) -> Result<[Mark]> {
+        let combined = _combine(marks, name: "paragraph", processContent: curry(inlineMarkup)(text)) { $0.name == "line" }
+        return .success(combined)
+    }
+    
+    func matchList(_ marks: [Mark]) -> Result<[Mark]> {
+        return .success(_group(marks, name: "list") { $0.name == "list.item" })
+    }
+    
+    func matchTable(_ marks: [Mark]) -> Result<[Mark]> {
+        return .success(_group(marks, name: "table") { $0.name.hasPrefix("table.") })
+    }
+    
+    func sort(_ marks: [Mark]) -> Result<[Mark]> {
+        let sorted = marks.sorted { (m1, m2) -> Bool in
+            return m1.range.lowerBound < m2.range.lowerBound
+        }
+        return .success(sorted)
+    }
 }

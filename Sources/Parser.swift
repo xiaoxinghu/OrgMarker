@@ -65,15 +65,9 @@ fileprivate func parse(_ context: Context, range: Range<String.Index>) -> OMResu
 //}
 
 func singalTheadedParse(
-    _ context: Context, ranges: [Range<String.Index>]) -> OMResult<[Mark]> {
-    func _append(marks1: [Mark], marks2: [Mark]) -> [Mark] {
-        return marks1 + marks2
-    }
-    
-    let curriedAppend = curry(_append)
-    
+    _ context: Context, ranges: [Range<String.Index>]) -> OMResult<[Mark]> {    
     return ranges.reduce(Result.success([Mark]())) { result, range in
-        return (curriedAppend <^> result) <*> parse(context, range: range)
+        return (curry(_concat) <^> result) <*> parse(context, range: range)
     }
 }
 
@@ -86,25 +80,15 @@ func parallelParse(
     var asyncResult: Result<[Mark]> = .success([Mark]())
     let resultQ = DispatchQueue(label: "com.orgmarker.result")
     
-    func completion(result: Result<[Mark]>) {
-        resultQ.sync {
-            if case .failure = asyncResult { return }
-            guard case .success(let all) = asyncResult else { return }
-            switch result {
-            case .success(let chunk):
-                asyncResult = .success(all + chunk)
-            case .failure:
-                asyncResult = result
-            }
-        }
-    }
-    
     let group = DispatchGroup()
     let chunks = _slice(array: ranges, into: context.threads)
     
     chunks.forEach { chunk in
         queue.async(group: group) {
-            completion(result: singalTheadedParse(context, ranges: chunk))
+            let r = singalTheadedParse(context, ranges: chunk)
+            resultQ.sync {
+                asyncResult = (curry(_concat) <^> asyncResult) <*> r
+            }
         }
     }
     
@@ -114,6 +98,10 @@ func parallelParse(
     //            callback(asyncResult >>- sort)
     //        }
     
+}
+
+fileprivate func _concat(marks1: [Mark], marks2: [Mark]) -> [Mark] {
+    return marks1 + marks2
 }
 
 fileprivate func inlineMarkup(on text: String, range: Range<String.Index>) -> [Mark] {

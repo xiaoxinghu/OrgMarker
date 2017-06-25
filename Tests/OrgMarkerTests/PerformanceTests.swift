@@ -28,24 +28,6 @@ class PerformanceTests: XCTestCase {
         }
     }
     
-    func testMarking() {
-        self.measure {
-            _ = tokenize(Context(self.content), range:  self.content.startIndex..<self.content.endIndex)
-        }
-    }
-    
-    func testParsing() throws {        
-        let result = tokenize(Context(self.content), range: content.startIndex..<content.endIndex)
-        guard case .success(let marks) = result else {
-            XCTFail()
-            return
-        }
-        let parse = Parser.matchList |> Parser.matchTable
-        self.measure {
-            _ = parse(marks)
-        }
-    }
-    
     /*
      func testSection() throws {
      var marks = try _mark(self.content)
@@ -130,7 +112,6 @@ class PerformanceTests: XCTestCase {
     
     static var allTests : [(String, (PerformanceTests) -> () throws -> Void)] {
         return [
-            ("testMarking", testMarking),
             //      ("testParsing", testParsing),
             //      ("testSection", testSection),
         ]

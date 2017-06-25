@@ -34,8 +34,8 @@ public struct Marker {
         
     public func mark(_ text: String, range: Range<String.Index>? = nil, parallel: Bool = false) -> OMResult<[Mark]> {
         let range = range ?? text.startIndex..<text.endIndex
-        let parseF = parallel ? Parser.parallelParse : Parser.singalTheadedParse
-        let f = buildContext |> Parser.updateGrammar |> curry(Parser.breakdown)(range) |> parseF
+        let parseF = parallel ? parallelParse : singalTheadedParse
+        let f = buildContext |> updateGrammar |> curry(breakdown)(range) |> parseF
         return f(text)
     }
     

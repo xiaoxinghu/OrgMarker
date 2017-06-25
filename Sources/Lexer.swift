@@ -59,14 +59,9 @@ extension Grammar {
         return nil
     }
     
-    fileprivate func matchingPatterns(named name: String? = nil,
-                                      in text: String,
-                                      range: Range<String.Index>) -> [PatternMatch] {
+    func matchingPatterns(in text: String,
+                          range: Range<String.Index>) -> [PatternMatch] {
         
-        var _patterns = patterns
-        if let patternName = name {
-            _patterns = _patterns.filter { $0.name == patternName }
-        }
         
         var matches = [PatternMatch]()
         
@@ -74,7 +69,7 @@ extension Grammar {
             return !matches.contains { _, r in r.range.overlaps(rmr.range) }
         }
         
-        for p in _patterns {
+        for p in patterns {
             matches += p.match.expression
                 .matches(in: text, range: range)
                 .filter(valid)
@@ -83,9 +78,44 @@ extension Grammar {
         return matches
     }
     
+    func matchingPatterns(
+        named name: String,
+        in text: String,
+        range: Range<String.Index>) -> [PatternMatch] {
+        let pattern = patterns.first { $0.name == name }!
+        var range = range
+        
+        var matches = [PatternMatch]()
+        while !range.isEmpty,
+            let match = pattern.match.expression.firstMatch(in: text, range: range) {
+                matches.append((pattern, match))
+                range = match.range.upperBound..<range.upperBound
+        }
+        return matches
+    }
+    
+    fileprivate func matching(
+        pattern: Pattern,
+        in text: String,
+        range: Range<String.Index>) -> [RegexMatchingResult] {
+        var range = range
+        
+        var matches = [RegexMatchingResult]()
+        while !range.isEmpty,
+            let match = pattern.match.expression.firstMatch(in: text, range: range) {
+                matches.append(match)
+                range = match.range.upperBound..<range.upperBound
+        }
+        return matches
+    }
+    
     func markup(only name: String? = nil,
                 on text: String,
                 range: Range<String.Index>) -> [Mark] {
-        return matchingPatterns(named: name, in: text, range: range).map(curry(buildMark)(text))
+        if let name = name {
+            return matchingPatterns(named: name, in: text, range: range).map(curry(buildMark)(text))
+        }
+        return matchingPatterns(in: text, range: range).map(curry(buildMark)(text))
+        
     }
 }

@@ -34,20 +34,24 @@ func updateGrammar(context: Context) -> OMResult<Context> {
         updatedGrammar = Grammar.main(todo: todo)
     }
     
-    
     return .success(updatedGrammar != nil ? Context(text, with: updatedGrammar!) : context)
 }
 
 func breakdown(_ range: Range<String.Index>, _ context: Context) -> Result<(Context, [Range<String.Index>])> {
-    var ranges = [Range<String.Index>]()
-    var range = range
-    while !range.isEmpty,
-        let match = context.text.range(of: "(\(eol))(\\*+)\(space)", options: .regularExpression, range: range) {
-            let point = context.text.index(after: match.lowerBound)
-            ranges.append(range.lowerBound..<point)
-            range = point..<context.text.endIndex
+    let grammar = context.grammar
+    let text = context.text
+    let matches = grammar.matchingPatterns(named: "headline", in: text, range: range)    
+    var ranges = matches.reduce([Range<String.Index>]()) { all, match in
+        let (_, match) = match
+        if all.isEmpty {
+            return [range.lowerBound..<match.range.lowerBound]
+        } else {
+            return all + [all.last!.upperBound..<match.range.lowerBound]
+        }
     }
-    if !range.isEmpty { ranges.append(range) }
+    if ranges.isEmpty { ranges = [range] }
+    else { ranges.append(ranges.last!.upperBound..<range.upperBound) }
+    
     return .success(context, ranges)
 }
 
@@ -93,11 +97,7 @@ func parallelParse(
     }
     
     group.wait()
-    return asyncResult >>- sort
-    //        group.notify(queue: queue) {
-    //            callback(asyncResult >>- sort)
-    //        }
-    
+    return asyncResult >>- sort    
 }
 
 fileprivate func _concat(marks1: [Mark], marks2: [Mark]) -> [Mark] {

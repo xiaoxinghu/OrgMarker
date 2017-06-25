@@ -29,20 +29,21 @@ class PerformanceTests: XCTestCase {
     }
     
     func testMarking() {
-        let marker = Marker()
+        let lexer = Lexer(Grammar.main())
         self.measure {
-            _ = marker.tokenize(Context(self.content), range: self.content.startIndex..<self.content.endIndex)
+            _ = lexer.tokenize(self.content, range: self.content.startIndex..<self.content.endIndex)
         }
     }
     
     func testParsing() throws {
-        let marker = Marker()
-        let result = marker.tokenize(Context(self.content), range: content.startIndex..<content.endIndex)
+        let lexer = Lexer(Grammar.main())
+        
+        let result = lexer.tokenize(self.content, range: content.startIndex..<content.endIndex)
         guard case .success(let marks) = result else {
             XCTFail()
             return
         }
-        let parse = marker.matchList |> marker.matchTable
+        let parse = Parser.matchList |> Parser.matchTable
         self.measure {
             _ = parse(marks)
         }
@@ -78,51 +79,40 @@ class PerformanceTests: XCTestCase {
         }
     }
     
-    func testTheWholeProcessAsync() throws {
+    func testTheWholeProcessParallel() throws {
         let marker = Marker()
         self.measure {
-            let exp = self.expectation(description: "async mark")
-            marker.mark(self.content) { _ in exp.fulfill() }
-            self.waitForExpectations(timeout: 10, handler: nil)
+            _ = marker.mark(self.content, parallel: true)
         }
     }
     
     func testSectionize() {
-        let marker = Marker()
-        let f: (String) -> OMResult<[Mark]> = marker.mark |> marker.updateSectionInfo
-        
-        var result: OMResult<[Mark]>!
-        measure {
-            result = f(self.content)
-        }
-        
-        print("marks")
+        // TODO: implement test
+//        let marker = Marker()
+//        let f: (String) -> OMResult<[Mark]> = marker.mark |> marker.updateSectionInfo
+//        
+//        var result: OMResult<[Mark]>!
+//        measure {
+//            result = f(self.content)
+//        }
+//        
+//        print("marks")
     }
     
     func testOrder() throws {
-        let expectation1 = expectation(description: "expectation1")
         
         let marker = Marker()
-        var asyncMarks = [Mark]()
-        var syncMarks = [Mark]()
-        marker.mark(content) { result in
-            switch result {
-            case .failure(let error):
-                XCTFail("ERROR: \(error)")
-            case .success(let marks):
-                asyncMarks = marks
-                expectation1.fulfill()
-            }
+        
+        guard case .success(let syncMarks) = marker.mark(content) else {
+            XCTFail()
+            return
         }
         
-        switch marker.mark(content) {
-        case .success(let marks):
-            syncMarks = marks
-        case .failure(let error):
-            XCTFail("> ERROR: \(error)")
+        guard case .success(let asyncMarks) = marker.mark(content, parallel: true) else {
+            XCTFail()
+            return
         }
         
-        waitForExpectations(timeout: 10, handler: nil)
         XCTAssertEqual(asyncMarks.count, syncMarks.count)
         
         

@@ -12,6 +12,8 @@ protocol OMLexer {
     func tokenize(_ text: String, range: Range<String.Index>) -> Result<[Mark]>
 }
 
+// TODO: make lexer function based
+
 fileprivate func buildMark(on text: String, for result: PatternMatch) -> Mark {
     let (pattern, match) = result
     var mark = Mark(pattern.name, range: match.range)

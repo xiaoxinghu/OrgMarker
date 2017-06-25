@@ -67,6 +67,12 @@ extension Parser {
     }
 
     static func parse(_ context: Context, ranges: [Range<String.Index>]) -> OMResult<[Mark]> {
+        let f = context.threads > 1 ? parallelParse : singalTheadedParse
+        return f(context, ranges)
+    }
+    
+    static func singalTheadedParse(
+        _ context: Context, ranges: [Range<String.Index>]) -> OMResult<[Mark]> {
         func _append(marks1: [Mark], marks2: [Mark]) -> [Mark] {
             return marks1 + marks2
         }
@@ -76,13 +82,13 @@ extension Parser {
         return ranges.reduce(Result.success([Mark]())) { result, range in
             return (curriedAppend <^> result) <*> parse(context, range: range)
         }
-
     }
     
-    static func parse(
-        callback: @escaping (OMResult<[Mark]>) -> Void,
+    
+    
+    static func parallelParse(
         context: Context,
-        ranges: [Range<String.Index>]) {
+        ranges: [Range<String.Index>]) -> OMResult<[Mark]> {
         
         let queue = DispatchQueue.global(qos: .userInitiated)
         
@@ -103,17 +109,19 @@ extension Parser {
         }
         
         let group = DispatchGroup()
-        let chunks = _slice(array: ranges, into: 4)
+        let chunks = _slice(array: ranges, into: context.threads)
         
         chunks.forEach { chunk in
             queue.async(group: group) {
-                completion(result: parse(context, ranges: chunk))
+                completion(result: singalTheadedParse(context, ranges: chunk))
             }
         }
         
-        group.notify(queue: queue) {
-            callback(asyncResult >>- sort)
-        }
+        group.wait()
+        return asyncResult >>- sort
+//        group.notify(queue: queue) {
+//            callback(asyncResult >>- sort)
+//        }
 
     }
     
@@ -140,6 +148,35 @@ extension Parser {
         }
         return .success(sorted)
     }
+    
+    fileprivate static func addSectionInfo(_ marks: [Mark], at index: Int) -> [Mark] {
+        var marks = marks
+        var headline = marks[index]
+        guard let stars = headline.meta[".stars"] else {
+            return marks
+        }
+        
+        if let next = marks[index+1..<marks.endIndex]
+            .first(where: { $0.name == "headline" && $0.meta[".stars"]!.characters.count <= stars.characters.count }) {
+            headline.meta["end"] = next.meta[".text"]
+        } else {
+            headline.meta["end"] = "EOF"
+        }
+        marks[index] = headline
+        return marks
+    }
+    
+    static func updateSectionInfo(_ marks: [Mark]) -> Result<[Mark]> {
+        
+        let headlines = marks.enumerated().filter { $0.element.name == "headline" }.map { $0.offset }
+        
+        let marks = headlines.reduce(marks) { result, headline in
+            return addSectionInfo(result, at: headline)
+        }
+        
+        return .success(marks)
+    }
+
 }
 
 func _group(_ marks: [Mark],

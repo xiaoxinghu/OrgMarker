@@ -8,12 +8,6 @@
 
 import Foundation
 
-protocol OMLexer {
-    func tokenize(_ text: String, range: Range<String.Index>) -> Result<[Mark]>
-}
-
-// TODO: make lexer function based
-
 fileprivate func buildMark(on text: String, for result: PatternMatch) -> Mark {
     let (pattern, match) = result
     var mark = Mark(pattern.name, range: match.range)
@@ -31,24 +25,17 @@ fileprivate func buildMark(on text: String, for result: PatternMatch) -> Mark {
     return mark
 }
 
-struct Lexer: OMLexer {
-    
-    private let grammar: Grammar
-    
-    init(_ _grammar: Grammar) {
-        grammar = _grammar
+func tokenize(_ context: Context, range: Range<String.Index>) -> Result<[Mark]> {
+    let grammar = context.grammar
+    let text = context.text
+    if range.isEmpty { return .success([]) }
+    guard let (pattern, match) = grammar.firstMatchingPattern(in: text, range: range) else {
+        return .failure(.cannotFindToken("Cannot find matching token"))
     }
-    
-    func tokenize(_ text: String, range: Range<String.Index>) -> Result<[Mark]> {
-        if range.isEmpty { return .success([]) }
-        guard let (pattern, match) = grammar.firstMatchingPattern(in: text, range: range) else {
-            return .failure(.cannotFindToken("Cannot find matching token"))
-        }
-        let newMark = buildMark(on: text, for: (pattern, match))
-        let newRange = match.range.upperBound..<range.upperBound
-        let theRest = tokenize(text, range: newRange)
-        return theRest.map { [newMark] + $0 }
-    }
+    let newMark = buildMark(on: text, for: (pattern, match))
+    let newRange = match.range.upperBound..<range.upperBound
+    let theRest = tokenize(context, range: newRange)
+    return theRest.map { [newMark] + $0 }
 }
 
 extension Grammar {
@@ -73,8 +60,8 @@ extension Grammar {
     }
     
     fileprivate func matchingPatterns(named name: String? = nil,
-                          in text: String,
-                          range: Range<String.Index>) -> [PatternMatch] {
+                                      in text: String,
+                                      range: Range<String.Index>) -> [PatternMatch] {
         
         var _patterns = patterns
         if let patternName = name {

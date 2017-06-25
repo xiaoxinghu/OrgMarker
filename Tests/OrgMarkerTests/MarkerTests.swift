@@ -69,12 +69,11 @@ class MarkerTests: XCTestCase {
         
         
         let marker = Marker()
-        let lexer = Lexer(Grammar.main())
-        let adapt: (Context) -> Result<(String, Range<String.Index>)> = {
-            return .success(($0.text, $0.text.startIndex..<$0.text.endIndex))
+        let adapt: (Context) -> Result<(Context, Range<String.Index>)> = {
+            return .success(($0, $0.text.startIndex..<$0.text.endIndex))
         }
         
-        let f = Parser.updateGrammar |> adapt |> lexer.tokenize
+        let f = Parser.updateGrammar |> adapt |> tokenize
         //    guard case .success(_, _, let grammar) = marker.genGrammar(Context(text)) else {
         //      XCTFail()
         //      return

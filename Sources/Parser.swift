@@ -57,9 +57,7 @@ extension Parser {
     }
     
     static func parse(_ context: Context, range: Range<String.Index>) -> OMResult<[Mark]> {
-        let lexer = Lexer(context.grammar)
-        
-        let _mark = curry(lexer.tokenize)(context.text)
+        let _mark = curry(tokenize)(context)
             |> curry(matchParagraph)(context.text)
             |> matchList
             |> matchTable

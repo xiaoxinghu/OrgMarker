@@ -29,16 +29,13 @@ class PerformanceTests: XCTestCase {
     }
     
     func testMarking() {
-        let lexer = Lexer(Grammar.main())
         self.measure {
-            _ = lexer.tokenize(self.content, range: self.content.startIndex..<self.content.endIndex)
+            _ = tokenize(Context(self.content), range:  self.content.startIndex..<self.content.endIndex)
         }
     }
     
-    func testParsing() throws {
-        let lexer = Lexer(Grammar.main())
-        
-        let result = lexer.tokenize(self.content, range: content.startIndex..<content.endIndex)
+    func testParsing() throws {        
+        let result = tokenize(Context(self.content), range: content.startIndex..<content.endIndex)
         guard case .success(let marks) = result else {
             XCTFail()
             return

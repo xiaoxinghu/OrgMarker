@@ -9,6 +9,11 @@
 /* Begin PBXBuildFile section */
 		03CF04FE1E97A3D300BB1E33 /* Helpers.swift in Sources */ = {isa = PBXBuildFile; fileRef = 03E134C61E8DB768002F8C34 /* Helpers.swift */; };
 		A74A5FCA1E7A21540099E079 /* Serialization.swift in Sources */ = {isa = PBXBuildFile; fileRef = A74A5FC91E7A21540099E079 /* Serialization.swift */; };
+		A7635AC21EFB38A700DAFC95 /* Errors.swift in Sources */ = {isa = PBXBuildFile; fileRef = A7635AC11EFB38A700DAFC95 /* Errors.swift */; };
+		A7635AC41EFB4B4C00DAFC95 /* UtilityTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = A7635AC31EFB4B4C00DAFC95 /* UtilityTests.swift */; };
+		A7635AC81EFC87A000DAFC95 /* ReleaseTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = A7635AC71EFC87A000DAFC95 /* ReleaseTests.swift */; };
+		A7635ACD1EFDDBC400DAFC95 /* Lexer.swift in Sources */ = {isa = PBXBuildFile; fileRef = A7635ACC1EFDDBC400DAFC95 /* Lexer.swift */; };
+		A7635ACF1EFE2C8A00DAFC95 /* Parser.swift in Sources */ = {isa = PBXBuildFile; fileRef = A7635ACE1EFE2C8A00DAFC95 /* Parser.swift */; };
 		A78CB9881E8486AA004D9E93 /* StructuralTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = A78CB9871E8486AA004D9E93 /* StructuralTests.swift */; };
 		A7BF418F1E788AC800E5C867 /* Regex.swift in Sources */ = {isa = PBXBuildFile; fileRef = A7BF418E1E788AC800E5C867 /* Regex.swift */; };
 		A7BF41921E789E2D00E5C867 /* GrammarTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = A7BF41911E789E2D00E5C867 /* GrammarTests.swift */; };
@@ -36,19 +41,24 @@
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
-		03E134C61E8DB768002F8C34 /* Helpers.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Helpers.swift; sourceTree = "<group>"; };
+		03E134C61E8DB768002F8C34 /* Helpers.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; lineEnding = 0; path = Helpers.swift; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.swift; };
 		A74A5FC91E7A21540099E079 /* Serialization.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Serialization.swift; sourceTree = "<group>"; };
+		A7635AC11EFB38A700DAFC95 /* Errors.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Errors.swift; sourceTree = "<group>"; };
+		A7635AC31EFB4B4C00DAFC95 /* UtilityTests.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = UtilityTests.swift; sourceTree = "<group>"; };
+		A7635AC71EFC87A000DAFC95 /* ReleaseTests.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ReleaseTests.swift; sourceTree = "<group>"; };
+		A7635ACC1EFDDBC400DAFC95 /* Lexer.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Lexer.swift; sourceTree = "<group>"; };
+		A7635ACE1EFE2C8A00DAFC95 /* Parser.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Parser.swift; sourceTree = "<group>"; };
 		A78CB9871E8486AA004D9E93 /* StructuralTests.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = StructuralTests.swift; sourceTree = "<group>"; };
-		A7BF418E1E788AC800E5C867 /* Regex.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Regex.swift; sourceTree = "<group>"; };
+		A7BF418E1E788AC800E5C867 /* Regex.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; lineEnding = 0; path = Regex.swift; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.swift; };
 		A7BF41911E789E2D00E5C867 /* GrammarTests.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = GrammarTests.swift; sourceTree = "<group>"; };
 		A7D307881E889A0A00DB61CF /* InlineTests.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = InlineTests.swift; sourceTree = "<group>"; };
-		A7DFA7FC1E8359BC0020576B /* Functional.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Functional.swift; sourceTree = "<group>"; };
+		A7DFA7FC1E8359BC0020576B /* Functional.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; lineEnding = 0; path = Functional.swift; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.swift; };
 		A7DFA7FE1E8364000020576B /* Utils.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Utils.swift; sourceTree = "<group>"; };
 		OBJ_10 /* Mark.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Mark.swift; sourceTree = "<group>"; };
-		OBJ_11 /* Marker.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Marker.swift; sourceTree = "<group>"; };
+		OBJ_11 /* Marker.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; lineEnding = 0; path = Marker.swift; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.swift; };
 		OBJ_13 /* Pattern.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Pattern.swift; sourceTree = "<group>"; };
 		OBJ_14 /* String.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = String.swift; sourceTree = "<group>"; };
-		OBJ_17 /* MarkerTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MarkerTests.swift; sourceTree = "<group>"; };
+		OBJ_17 /* MarkerTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; lineEnding = 0; path = MarkerTests.swift; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.swift; };
 		OBJ_19 /* PerformanceTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PerformanceTests.swift; sourceTree = "<group>"; };
 		OBJ_21 /* OrgMarker.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = OrgMarker.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		OBJ_22 /* OrgMarkerTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; path = OrgMarkerTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -100,6 +110,8 @@
 				OBJ_19 /* PerformanceTests.swift */,
 				A7D307881E889A0A00DB61CF /* InlineTests.swift */,
 				03E134C61E8DB768002F8C34 /* Helpers.swift */,
+				A7635AC31EFB4B4C00DAFC95 /* UtilityTests.swift */,
+				A7635AC71EFC87A000DAFC95 /* ReleaseTests.swift */,
 			);
 			name = OrgMarkerTests;
 			path = Tests/OrgMarkerTests;
@@ -136,6 +148,8 @@
 			isa = PBXGroup;
 			children = (
 				OBJ_9 /* Grammar.swift */,
+				A7635ACC1EFDDBC400DAFC95 /* Lexer.swift */,
+				A7635ACE1EFE2C8A00DAFC95 /* Parser.swift */,
 				OBJ_10 /* Mark.swift */,
 				A7DFA7FE1E8364000020576B /* Utils.swift */,
 				OBJ_11 /* Marker.swift */,
@@ -144,6 +158,7 @@
 				A7BF418E1E788AC800E5C867 /* Regex.swift */,
 				A74A5FC91E7A21540099E079 /* Serialization.swift */,
 				A7DFA7FC1E8359BC0020576B /* Functional.swift */,
+				A7635AC11EFB38A700DAFC95 /* Errors.swift */,
 			);
 			name = OrgMarker;
 			path = Sources;
@@ -158,6 +173,7 @@
 			buildPhases = (
 				OBJ_27 /* Sources */,
 				OBJ_34 /* Frameworks */,
+				A7635AC91EFCDE7900DAFC95 /* ShellScript */,
 			);
 			buildRules = (
 			);
@@ -217,6 +233,22 @@
 		};
 /* End PBXProject section */
 
+/* Begin PBXShellScriptBuildPhase section */
+		A7635AC91EFCDE7900DAFC95 /* ShellScript */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputPaths = (
+			);
+			outputPaths = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "TAGS=\"TODO:|FIXME:\"\necho \"searching ${SRCROOT} for ${TAGS}\"\nfind \"${SRCROOT}/Sources\" \"${SRCROOT}/Tests\" \\( -name \"*.swift\" \\) -print0 | xargs -0 egrep --with-filename --line-number --only-matching \" ($TAGS).*\\$\" | perl -p -e \"s/($TAGS)/ warning: \\$1/\"";
+		};
+/* End PBXShellScriptBuildPhase section */
+
 /* Begin PBXSourcesBuildPhase section */
 		OBJ_27 /* Sources */ = {
 			isa = PBXSourcesBuildPhase;
@@ -227,7 +259,10 @@
 				A74A5FCA1E7A21540099E079 /* Serialization.swift in Sources */,
 				OBJ_30 /* Marker.swift in Sources */,
 				A7BF418F1E788AC800E5C867 /* Regex.swift in Sources */,
+				A7635ACD1EFDDBC400DAFC95 /* Lexer.swift in Sources */,
 				A7DFA7FF1E8364000020576B /* Utils.swift in Sources */,
+				A7635AC21EFB38A700DAFC95 /* Errors.swift in Sources */,
+				A7635ACF1EFE2C8A00DAFC95 /* Parser.swift in Sources */,
 				A7DFA7FD1E8359BC0020576B /* Functional.swift in Sources */,
 				OBJ_32 /* Pattern.swift in Sources */,
 				OBJ_33 /* String.swift in Sources */,
@@ -239,8 +274,10 @@
 			buildActionMask = 0;
 			files = (
 				A78CB9881E8486AA004D9E93 /* StructuralTests.swift in Sources */,
+				A7635AC81EFC87A000DAFC95 /* ReleaseTests.swift in Sources */,
 				03CF04FE1E97A3D300BB1E33 /* Helpers.swift in Sources */,
 				OBJ_40 /* MarkerTests.swift in Sources */,
+				A7635AC41EFB4B4C00DAFC95 /* UtilityTests.swift in Sources */,
 				OBJ_42 /* PerformanceTests.swift in Sources */,
 				A7D307891E889A0A00DB61CF /* InlineTests.swift in Sources */,
 				A7BF41921E789E2D00E5C867 /* GrammarTests.swift in Sources */,

@@ -28,36 +28,6 @@ class PerformanceTests: XCTestCase {
         }
     }
     
-    func testMarking() {
-        let marker = Marker()
-        self.measure {
-            _ = marker.tokenize(Context(self.content), range: self.content.startIndex..<self.content.endIndex)
-        }
-    }
-    
-    func testParsing() throws {
-        let marker = Marker()
-        let result = marker.tokenize(Context(self.content), range: content.startIndex..<content.endIndex)
-        guard case .success(let marks) = result else {
-            XCTFail()
-            return
-        }
-        let parse = marker.matchList |> marker.matchTable
-        self.measure {
-            _ = parse(marks)
-        }
-    }
-    
-    /*
-     func testSection() throws {
-     var marks = try _mark(self.content)
-     marks = try analyze(marks)
-     self.measure {
-     _ = section(marks, on: self.content)
-     }
-     }
-     */
-    
     func testSerialization() throws {
         let marker = Marker()
         let result = marker.mark(content)
@@ -78,39 +48,35 @@ class PerformanceTests: XCTestCase {
         }
     }
     
-    func testTheWholeProcessAsync() throws {
+    func testTheWholeProcessParallel() throws {
         let marker = Marker()
         self.measure {
-            let exp = self.expectation(description: "async mark")
-            marker.mark(self.content) { _ in exp.fulfill() }
-            self.waitForExpectations(timeout: 10, handler: nil)
+            _ = marker.mark(self.content, parallel: true)
+        }
+    }
+    
+    func testSectionize() {
+        // TODO: implement test
+        let marker = Marker()
+        self.measure {
+            let m = marker.mark(self.content) >>- updateSectionInfo
         }
     }
     
     func testOrder() throws {
-        let expectation1 = expectation(description: "expectation1")
         
         let marker = Marker()
-        var asyncMarks = [Mark]()
-        var syncMarks = [Mark]()
-        marker.mark(content) { result in
-            switch result {
-            case .failure(let error):
-                XCTFail("ERROR: \(error)")
-            case .success(let marks):
-                asyncMarks = marks
-                expectation1.fulfill()
-            }
+        
+        guard case .success(let syncMarks) = marker.mark(content) else {
+            XCTFail()
+            return
         }
         
-        switch marker.mark(content) {
-        case .success(let marks):
-            syncMarks = marks
-        case .failure(let error):
-            XCTFail("> ERROR: \(error)")
+        guard case .success(let asyncMarks) = marker.mark(content, parallel: true) else {
+            XCTFail()
+            return
         }
         
-        waitForExpectations(timeout: 10, handler: nil)
         XCTAssertEqual(asyncMarks.count, syncMarks.count)
         
         
@@ -131,7 +97,6 @@ class PerformanceTests: XCTestCase {
     
     static var allTests : [(String, (PerformanceTests) -> () throws -> Void)] {
         return [
-            ("testMarking", testMarking),
             //      ("testParsing", testParsing),
             //      ("testSection", testSection),
         ]

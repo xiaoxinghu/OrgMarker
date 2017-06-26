@@ -73,3 +73,7 @@ public func curry<A, B, C, D>(_ function: @escaping (A, B, C) -> D) -> (A) -> (B
             { (c: C) -> D in
                 function(a, b, c) } } }
 }
+
+public func curry<A, B, C, D, E>(_ function: @escaping (A, B, C, D) -> E) -> (A) -> (B) -> (C) -> (D) -> E {
+    return { (a: A) -> (B) -> (C) -> (D) -> E in { (b: B) -> (C) -> (D) -> E in { (c: C) -> (D) -> E in { (d: D) -> E in function(a, b, c, d) } } } }
+}

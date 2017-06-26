@@ -291,7 +291,7 @@ fileprivate func EvalOneliner(_ text: String,
                               file: StaticString = #file, line: UInt = #line,
                               and: (Mark, String) -> Void = { _ in }) {
     do {
-        let result = tokenize(Context(text), range: text.startIndex..<text.endIndex)
+        let result = tokenize(Context(text))
         switch result {
         case .success(let marks):
             XCTAssertEqual(1, marks.count, file: file, line: line)

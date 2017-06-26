@@ -25,16 +25,18 @@ fileprivate func buildMark(on text: String, for result: PatternMatch) -> Mark {
     return mark
 }
 
-func tokenize(_ context: Context, range: Range<String.Index>) -> Result<[Mark]> {
+func tokenize(_ context: Context) -> Result<[Mark]> {
     let grammar = context.grammar
     let text = context.text
+    let range = context.range
     if range.isEmpty { return .success([]) }
     guard let (pattern, match) = grammar.firstMatchingPattern(in: text, range: range) else {
         return .failure(.cannotFindToken("Cannot find matching token"))
     }
     let newMark = buildMark(on: text, for: (pattern, match))
-    let newRange = match.range.upperBound..<range.upperBound
-    let theRest = tokenize(context, range: newRange)
+    var newContext = context
+    newContext.range = match.range.upperBound..<range.upperBound
+    let theRest = tokenize(newContext)
     return theRest.map { [newMark] + $0 }
 }
 

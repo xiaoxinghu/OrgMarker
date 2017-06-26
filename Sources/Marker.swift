@@ -10,14 +10,25 @@ import Foundation
 import Dispatch
 
 struct Context {
+    
     let text: String
+    
+    var range: Range<String.Index>
+    
     var grammar: Grammar
+    
     var threads: Int
     
+    var marks: [Mark] = []
+    
+    var sections: [Mark] = []
+    
     init(_ _text: String,
+         range _range: Range<String.Index>? = nil,
          with _grammar: Grammar = Grammar.main(),
          threads _threads: Int = 4) {
         text = _text
+        range = _range ?? _text.startIndex..<_text.endIndex
         grammar = _grammar
         threads = _threads
     }
@@ -37,14 +48,17 @@ public struct Marker {
         _ text: String,
         range: Range<String.Index>? = nil,
         parallel: Bool = false) -> OMResult<[Mark]> {
-        let range = range ?? text.startIndex..<text.endIndex
         let parseF = parallel ? parallelParse : singalTheadedParse
-        let f = buildContext |> updateGrammar |> curry(breakdown)(range) |> parseF
-        return f(text)
+        let f = buildContext |> updateGrammar |> breakdown |> parseF |> extractResult
+        return f((text, range))
     }
     
-    private func buildContext(_ text: String) -> Result<Context> {
+    private func extractResult(from context: Context) -> OMResult<[Mark]> {
+        return .success(context.marks)
+    }
+    
+    private func buildContext(_ text: String, range: Range<String.Index>?) -> Result<Context> {
         let grammar = Grammar.main(todo: todos.flatMap { $0 })
-        return .success(Context(text, with: grammar, threads: threads))
+        return .success(Context(text, range: range, with: grammar, threads: threads))
     }
 }

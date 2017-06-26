@@ -67,15 +67,10 @@ class PerformanceTests: XCTestCase {
     
     func testSectionize() {
         // TODO: implement test
-//        let marker = Marker()
-//        let f: (String) -> OMResult<[Mark]> = marker.mark |> marker.updateSectionInfo
-//        
-//        var result: OMResult<[Mark]>!
-//        measure {
-//            result = f(self.content)
-//        }
-//        
-//        print("marks")
+        let marker = Marker()
+        self.measure {
+            let m = marker.mark(self.content) >>- updateSectionInfo
+        }
     }
     
     func testOrder() throws {

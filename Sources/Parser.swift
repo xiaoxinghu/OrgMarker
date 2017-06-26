@@ -34,12 +34,19 @@ func updateGrammar(context: Context) -> OMResult<Context> {
         updatedGrammar = Grammar.main(todo: todo)
     }
     
-    return .success(updatedGrammar != nil ? Context(text, with: updatedGrammar!) : context)
+    if updatedGrammar != nil {
+        var context = context
+        context.grammar = updatedGrammar!
+        return .success(context)
+    } else {
+        return .success(context)
+    }
 }
 
-func breakdown(_ range: Range<String.Index>, _ context: Context) -> Result<(Context, [Range<String.Index>])> {
+func breakdown(_ context: Context) -> Result<[Context]> {
     let grammar = context.grammar
     let text = context.text
+    let range = context.range
     let matches = grammar.matchingPatterns(named: "headline", in: text, range: range)    
     var ranges = matches.reduce([Range<String.Index>]()) { all, match in
         let (_, match) = match
@@ -52,15 +59,20 @@ func breakdown(_ range: Range<String.Index>, _ context: Context) -> Result<(Cont
     if ranges.isEmpty { ranges = [range] }
     else { ranges.append(ranges.last!.upperBound..<range.upperBound) }
     
-    return .success(context, ranges)
+    let contexts: [Context] = ranges.map { range in
+        var context = context
+        context.range = range
+        return context
+    }
+    return .success(contexts)
 }
 
-fileprivate func parse(_ context: Context, range: Range<String.Index>) -> OMResult<[Mark]> {
-    let _mark = curry(tokenize)(context)
+fileprivate func parse(_ context: Context) -> OMResult<[Mark]> {
+    let _mark = tokenize
         |> curry(matchParagraph)(context.text)
         |> matchList
         |> matchTable
-    return _mark(range)
+    return _mark(context)
 }
 
 //func parse(_ context: Context, ranges: [Range<String.Index>]) -> OMResult<[Mark]> {
@@ -69,35 +81,53 @@ fileprivate func parse(_ context: Context, range: Range<String.Index>) -> OMResu
 //}
 
 func singalTheadedParse(
-    _ context: Context, ranges: [Range<String.Index>]) -> OMResult<[Mark]> {    
-    return ranges.reduce(Result.success([Mark]())) { result, range in
-        return (curry(_concat) <^> result) <*> parse(context, range: range)
+    _ contexts: [Context]) -> OMResult<Context> {
+    return contexts.reduce(Result.success(contexts[0])) { result, context in
+        return (curry(_append) <^> parse(context)) <*> result
     }
 }
 
-func parallelParse(
-    context: Context,
-    ranges: [Range<String.Index>]) -> OMResult<[Mark]> {
+func parallelParse(contexts: [Context]) -> OMResult<Context> {
     
     let queue = DispatchQueue.global(qos: .userInitiated)
     
-    var asyncResult: Result<[Mark]> = .success([Mark]())
+    var result = OMResult.success(contexts[0])
+//    var asyncResult: Result<[Mark]> = .success([Mark]())
     let resultQ = DispatchQueue(label: "com.orgmarker.result")
     
     let group = DispatchGroup()
-    let chunks = _slice(array: ranges, into: context.threads)
+    
+    let chunks = _slice(array: contexts, into: contexts[0].threads)
+    
+//    let chunks: [Context] = _slice(array: context.parts, into: context.threads).map { ranges in
+//        var c = context
+//        c.parts = ranges
+//        return c
+//    }
     
     chunks.forEach { chunk in
         queue.async(group: group) {
-            let r = singalTheadedParse(context, ranges: chunk)
+            let r = singalTheadedParse(chunk)
             resultQ.sync {
-                asyncResult = (curry(_concat) <^> asyncResult) <*> r
+                result = (curry(_concat) <^> r) <*> result
             }
         }
     }
     
     group.wait()
-    return asyncResult >>- sort    
+    return result >>- sort
+}
+
+fileprivate func _append(marks: [Mark], to context: Context) -> Context {
+    var context = context
+    context.marks = context.marks + marks
+    return context
+}
+
+fileprivate func _concat(context1: Context, context2: Context) -> Context {
+    var context = context1
+    context.marks = context.marks + context2.marks
+    return context
 }
 
 fileprivate func _concat(marks1: [Mark], marks2: [Mark]) -> [Mark] {
@@ -121,11 +151,20 @@ fileprivate func matchTable(_ marks: [Mark]) -> Result<[Mark]> {
     return .success(_group(marks, name: "table") { $0.name.hasPrefix("table.") })
 }
 
-fileprivate func sort(_ marks: [Mark]) -> Result<[Mark]> {
-    let sorted = marks.sorted { (m1, m2) -> Bool in
+//fileprivate func sort(_ marks: [Mark]) -> Result<[Mark]> {
+//    let sorted = marks.sorted { (m1, m2) -> Bool in
+//        return m1.range.lowerBound < m2.range.lowerBound
+//    }
+//    return .success(sorted)
+//}
+
+fileprivate func sort(_ context: Context) -> Result<Context> {
+    let sorted = context.marks.sorted { (m1, m2) -> Bool in
         return m1.range.lowerBound < m2.range.lowerBound
     }
-    return .success(sorted)
+    var c = context
+    c.marks = sorted
+    return .success(c)
 }
 
 fileprivate func addSectionInfo(_ marks: [Mark], at index: Int) -> [Mark] {

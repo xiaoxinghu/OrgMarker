@@ -69,11 +69,8 @@ class MarkerTests: XCTestCase {
         
         
         let marker = Marker()
-        let adapt: (Context) -> Result<(Context, Range<String.Index>)> = {
-            return .success(($0, $0.text.startIndex..<$0.text.endIndex))
-        }
         
-        let f = updateGrammar |> adapt |> tokenize
+        let f = updateGrammar |> tokenize
         //    guard case .success(_, _, let grammar) = marker.genGrammar(Context(text)) else {
         //      XCTFail()
         //      return

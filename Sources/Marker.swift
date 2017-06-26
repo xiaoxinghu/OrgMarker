@@ -43,18 +43,28 @@ public struct Marker {
         todos _todos: [[String]] = [["TODO"], ["DONE"]]) {
         todos = _todos
     }
-        
+    
+    /// Mark the text. This function will sectionize the result if it is full text marking.
+    ///
+    /// - Parameters:
+    ///   - text: the target text
+    ///   - range: range to mark, for partial marking, full text marking if it is nil
+    ///   - parallel: parallel marking, use to parse big files
+    /// - Returns: marks
     public func mark(
         _ text: String,
         range: Range<String.Index>? = nil,
         parallel: Bool = false) -> OMResult<[Mark]> {
-        let parseF = parallel ? parallelParse : singalTheadedParse
+        var parseF = parallel ? parallelParse : singalTheadedParse
+        if range == nil { // full text marking, sectionize
+            parseF = parseF |> sectionize
+        }
         let f = buildContext |> updateGrammar |> breakdown |> parseF |> extractResult
         return f((text, range))
     }
     
     private func extractResult(from context: Context) -> OMResult<[Mark]> {
-        return .success(context.marks)
+        return .success(context.marks + context.sections)
     }
     
     private func buildContext(_ text: String, range: Range<String.Index>?) -> Result<Context> {

@@ -75,11 +75,6 @@ fileprivate func parse(_ context: Context) -> OMResult<[Mark]> {
     return _mark(context)
 }
 
-//func parse(_ context: Context, ranges: [Range<String.Index>]) -> OMResult<[Mark]> {
-//    let f = context.threads > 1 ? parallelParse : singalTheadedParse
-//    return f(context, ranges)
-//}
-
 func singalTheadedParse(
     _ contexts: [Context]) -> OMResult<Context> {
     return contexts.reduce(Result.success(contexts[0])) { result, context in
@@ -193,6 +188,42 @@ func updateSectionInfo(_ marks: [Mark]) -> Result<[Mark]> {
     }
     
     return .success(marks)
+}
+
+func sectionize(_ context: Context) -> Result<Context> {    
+    let headlines = context.marks.filter { $0.name == "headline" }
+    
+    var sections = [Mark]()
+    var openSections = [Mark]()
+    
+    for headline in headlines {
+        // try to close open sections
+        while var last = openSections.last {
+            if last.meta[".stars"]!.characters.count < headline.meta[".stars"]!.characters.count {
+                break
+            }
+            
+            last.range = last.range.lowerBound..<headline.range.lowerBound
+            sections.append(last)
+            openSections.removeLast()
+        }
+        // add self to open sections
+        var section = Mark("section", range: headline.range.lowerBound..<headline.range.lowerBound)
+        section.meta[".stars"] = headline.meta[".stars"]!
+        openSections.append(section)
+    }
+    
+    let rest: [Mark] = openSections.map { os in
+        var section = os
+        section.range = section.range.lowerBound..<context.text.endIndex
+        return section
+    }
+    
+    sections.append(contentsOf: rest)
+    
+    var context = context
+    context.sections = sections
+    return .success(context)
 }
 
 fileprivate func _group(_ marks: [Mark],

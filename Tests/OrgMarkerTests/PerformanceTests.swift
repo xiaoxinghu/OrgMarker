@@ -28,16 +28,6 @@ class PerformanceTests: XCTestCase {
         }
     }
     
-    /*
-     func testSection() throws {
-     var marks = try _mark(self.content)
-     marks = try analyze(marks)
-     self.measure {
-     _ = section(marks, on: self.content)
-     }
-     }
-     */
-    
     func testSerialization() throws {
         let marker = Marker()
         let result = marker.mark(content)

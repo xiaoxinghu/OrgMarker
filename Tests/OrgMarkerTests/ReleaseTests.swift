@@ -21,7 +21,7 @@ class ReleaseTests: XCTestCase {
         let result = marker.mark(text)
         switch result {
         case .success(let marks):
-            XCTAssertEqual(2, marks.count)
+            XCTAssertEqual(3, marks.count)
         case .failure(let error):
             XCTFail("\(error)")
         }
